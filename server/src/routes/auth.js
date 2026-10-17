@@ -5,6 +5,7 @@ import rateLimit from 'express-rate-limit';
 import jwt from 'jsonwebtoken';
 import { z } from 'zod';
 import { inTransaction, pool } from '../db/pool.js';
+import { DEFAULT_DAILY_SPIN_CONFIG, normalizeDailySpinConfig } from '../lib/promotionConfig.js';
 import { postWalletMovement } from '../services/wallet.js';
 import { requireAuth, sessionToken } from '../middleware/auth.js';
 export const authRouter = Router();
@@ -24,7 +25,7 @@ export function normalizeReferralCode(value) {
     const source = String(value ?? '').trim();
     if (!source) return '';
     const normalized = source.toUpperCase();
-    if (!/^MKM-[A-Z0-9]{4,20}$/.test(normalized)) {
+    if (!/^(OT|MKM)-[A-Z0-9]{4,20}$/.test(normalized)) {
         throw Object.assign(new Error('Referral code is invalid.'), { status: 400, code: 'INVALID_REFERRAL' });
     }
     return normalized;
@@ -49,16 +50,19 @@ authRouter.post('/register', authLimiter, async (request, response, next) => {
         const result = await inTransaction(async (client) => {
             let sponsorId = null;
             if (referralCode) {
-                const sponsor = await client.query('SELECT id, referral_code FROM users WHERE referral_code = $1 AND status = $2', [referralCode, 'ACTIVE']);
+                const sponsor = await client.query(
+                    `SELECT id, referral_code FROM users 
+                     WHERE (referral_code = $1 OR referral_code = REPLACE($1, 'MKM-', 'OT-') OR referral_code = REPLACE($1, 'OT-', 'MKM-')) 
+                       AND status = $2`,
+                    [referralCode, 'ACTIVE']
+                );
                 if (!sponsor.rowCount)
                     throw Object.assign(new Error('That invite code is not valid.'), { status: 400, code: 'INVALID_REFERRAL' });
-                if (sponsor.rows[0].referral_code === referralCode && referralCode === referralCode.toUpperCase()) {
-                    sponsorId = sponsor.rows[0].id;
-                }
+                sponsorId = sponsor.rows[0].id;
             }
             let nextReferralCode = '';
             for (let attempt = 0; attempt < 5; attempt += 1) {
-                nextReferralCode = `MKM-${randomBytes(4).toString('hex').toUpperCase()}`;
+                nextReferralCode = `OT-${randomBytes(4).toString('hex').toUpperCase()}`;
                 const exists = await client.query('SELECT 1 FROM users WHERE referral_code = $1', [nextReferralCode]);
                 if (!exists.rowCount)
                     break;
@@ -83,6 +87,10 @@ try {
 }
             const user = userResult.rows[0];
             await client.query('INSERT INTO wallets(user_id) VALUES ($1)', [user.id]);
+            await client.query("INSERT INTO luck_wheel_eligibility(user_id, spin_type, source) VALUES ($1, 'SIGNUP', 'SIGNUP')", [user.id]);
+            const dailySpinSetting = await client.query("SELECT value FROM settings WHERE key = 'luck_wheel_daily_config'");
+            const dailySpinConfig = normalizeDailySpinConfig(dailySpinSetting.rows[0]?.value ?? DEFAULT_DAILY_SPIN_CONFIG);
+            await client.query("INSERT INTO luck_wheel_daily_state(user_id, next_spin_at) VALUES ($1, now() + ($2 * interval '1 hour'))", [user.id, dailySpinConfig.intervalHours]);
             if (sponsorId)
                 await client.query('INSERT INTO referrals(referrer_id, referred_user_id) VALUES ($1, $2)', [sponsorId, user.id]);
             const setting = await client.query("SELECT value #>> '{}' AS amount FROM settings WHERE key = 'registration_bonus'");
@@ -98,7 +106,7 @@ try {
                     description: 'Registration bonus',
                 });
             }
-            await client.query("INSERT INTO notifications(user_id, title, message, type) VALUES ($1, 'Welcome to MKM', 'Your account is ready.', 'REGISTRATION')", [user.id]);
+            await client.query("INSERT INTO notifications(user_id, title, message, type) VALUES ($1, 'Welcome to Online Trade', 'Your account is ready.', 'REGISTRATION')", [user.id]);
             const session = await client.query("INSERT INTO auth_sessions(user_id, expires_at) VALUES ($1, now() + interval '7 days') RETURNING id", [user.id]);
             return { user, sessionId: session.rows[0].id };
         });

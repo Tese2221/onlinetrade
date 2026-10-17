@@ -4,7 +4,11 @@ import { pool } from './db/pool.js';
 import { processAllEligibleTasks } from './services/dailyTaskProcessor.js';
 
 const port = Number(process.env.PORT ?? 4000);
+<<<<<<< HEAD
 const server = app.listen(port, () => console.log(`MKM API listening on port ${port}`));
+=======
+const server = app.listen(port, () => console.log(`Online Trade API listening on port ${port}`));
+>>>>>>> d1aaf18 (Update OnlineTrade project)
 
 // ---------------------------------------------------------------------------
 // Credit eligible daily rewards automatically and expire overdue purchases.

@@ -112,7 +112,7 @@ export function normalizeSupportSettings(raw = {}) {
   const whatsappUrl = normalizeUrl(raw.whatsappUrl ?? raw.whatsapp_url ?? null) ?? buildWhatsAppUrl(whatsappNumber, raw.whatsappMessage ?? raw.whatsapp_message ?? null);
 
   return {
-    siteName: raw.siteName ?? raw.site_name ?? 'MKM',
+    siteName: raw.siteName ?? raw.site_name ?? 'Online Trade',
     supportName: raw.supportName ?? raw.support_name ?? 'Customer Support',
     supportPhone: raw.supportPhone ?? raw.support_phone ?? null,
     supportMessage: raw.supportMessage ?? raw.support_message ?? 'We are here to help you.',
@@ -130,22 +130,101 @@ export function normalizeSupportSettings(raw = {}) {
     officialGroupEnabled: normalizeBoolean(raw.officialGroupEnabled ?? raw.official_group_enabled, true),
     appDownloadUrl: normalizeUrl(raw.appDownloadUrl ?? raw.app_download_url ?? null),
     aboutTitle: raw.aboutTitle ?? raw.about_title ?? 'One place for your member activity.',
-    aboutIntro: raw.aboutIntro ?? raw.about_intro ?? 'MKM brings account access, wallet records, product information, referrals and support into a single member experience.',
+    aboutIntro: raw.aboutIntro ?? raw.about_intro ?? 'Online Trade brings account access, wallet records, product information, referrals and support into a single member experience.',
     aboutFirstHeading: raw.aboutFirstHeading ?? raw.about_first_heading ?? 'Account-led',
     aboutFirstContent: raw.aboutFirstContent ?? raw.about_first_content ?? 'Members sign in with a phone number and can review account activity from the dashboard.',
     aboutSecondHeading: raw.aboutSecondHeading ?? raw.about_second_heading ?? 'Clear records',
-    aboutSecondContent: raw.aboutSecondContent ?? raw.about_second_content ?? 'Wallet and transaction activity is recorded by the MKM service and shown in the member portal.',
+    aboutSecondContent: raw.aboutSecondContent ?? raw.about_second_content ?? 'Wallet and transaction activity is recorded by the Online Trade service and shown in the member portal.',
     welcomeEyebrow: raw.welcomeEyebrow ?? raw.welcome_eyebrow ?? 'YOUR MEMBER JOURNEY STARTS HERE',
-    welcomeTitle: raw.welcomeTitle ?? raw.welcome_title ?? 'Welcome to MKM',
+    welcomeTitle: raw.welcomeTitle ?? raw.welcome_title ?? 'Welcome to Online Trade',
     welcomeIntro: raw.welcomeIntro ?? raw.welcome_intro ?? 'We’re glad you’re here. Explore your account, products, and member benefits from one place.',
     welcomeBonusLabel: raw.welcomeBonusLabel ?? raw.welcome_bonus_label ?? 'Welcome bonus',
     welcomeExampleTitle: raw.welcomeExampleTitle ?? raw.welcome_example_title ?? 'PRODUCT EXAMPLE',
     welcomeExamplePrice: normalizeWelcomeNumber(raw.welcomeExamplePrice ?? raw.welcome_example_price, 300),
+<<<<<<< HEAD
     welcomeExampleDailyEarnings: normalizeWelcomeNumber(raw.welcomeExampleDailyEarnings ?? raw.welcome_example_daily_earnings, 72),
     welcomeDisclaimer: raw.welcomeDisclaimer ?? raw.welcome_disclaimer ?? 'Illustrative example only. Actual product terms and earnings depend on the product details shown before purchase.',
     welcomeImageUrl: normalizeWelcomeImageUrl(raw.welcomeImageUrl ?? raw.welcome_image_url ?? null),
     welcomeImageAlt: raw.welcomeImageAlt ?? raw.welcome_image_alt ?? 'MKM welcome illustration with a rising plant and gift box',
+=======
+    welcomeExampleDailyEarnings: normalizeWelcomeNumber(raw.welcomeExampleDailyEarnings ?? raw.welcome_example_daily_earnings, 15),
+    welcomeDisclaimer: raw.welcomeDisclaimer ?? raw.welcome_disclaimer ?? 'Illustrative example only. Actual product terms and earnings depend on the product details shown before investing.',
+    welcomeImageUrl: normalizeWelcomeImageUrl(raw.welcomeImageUrl ?? raw.welcome_image_url ?? null),
+    welcomeImageAlt: raw.welcomeImageAlt ?? raw.welcome_image_alt ?? 'Online Trade welcome illustration with a rising plant and gift box',
+>>>>>>> d1aaf18 (Update OnlineTrade project)
     welcomeHomeButtonLabel: raw.welcomeHomeButtonLabel ?? raw.welcome_home_button_label ?? 'Go to Home',
     publicLinks: normalizePublicLinks(raw.publicLinks ?? raw.public_links ?? []),
+    promotionBanners: normalizePromotionBanners(raw.promotionBanners ?? raw.promotion_banners ?? []),
   };
+}
+
+export const DEFAULT_PROMOTION_BANNERS = [
+  {
+    id: 1,
+    imageUrl: '/banners/banner1.svg',
+    title: 'Invest in Fresh Fruits',
+    subtitle: 'Earn 5% Daily Income',
+    badge: 'FRUIT AGRI-TRADE',
+    link: '/products',
+    ctaText: 'Start Trading',
+  },
+  {
+    id: 2,
+    imageUrl: '/banners/banner2.svg',
+    title: 'Get Free ETB 100',
+    subtitle: 'New Member Welcome Bonus',
+    badge: 'NEW REGISTRATION',
+    link: '/recharge',
+    ctaText: 'Claim Bonus Now',
+  },
+  {
+    id: 3,
+    imageUrl: '/banners/banner3.svg',
+    title: 'Instant Bank Deposits',
+    subtitle: 'CBE, Telebirr, Awash, Abyssinia',
+    badge: 'PAYMENT CHANNELS',
+    link: '/recharge',
+    ctaText: 'Deposit Balance',
+  },
+  {
+    id: 4,
+    imageUrl: '/banners/banner4.svg',
+    title: 'Daily Harvest Tasks',
+    subtitle: 'Claim Daily Income in 1-Click',
+    badge: 'DAILY ACCRUAL',
+    link: '/purchases',
+    ctaText: 'View Tasks',
+  },
+  {
+    id: 5,
+    imageUrl: '/banners/banner5.svg',
+    title: 'Invite Friends & Earn',
+    subtitle: '3-Level Rewards (10%-3%-2%)',
+    badge: 'TEAM COMMISSIONS',
+    link: '/referrals',
+    ctaText: 'Invite Friends',
+  },
+];
+
+export function normalizePromotionBanners(raw) {
+  let list = raw;
+  if (typeof raw === 'string') {
+    try {
+      list = JSON.parse(raw);
+    } catch {
+      list = null;
+    }
+  }
+  if (!Array.isArray(list) || !list.length) {
+    return DEFAULT_PROMOTION_BANNERS;
+  }
+  return list.slice(0, 5).map((b, idx) => ({
+    id: b.id ?? idx + 1,
+    imageUrl: String(b.imageUrl ?? b.image_url ?? DEFAULT_PROMOTION_BANNERS[idx % DEFAULT_PROMOTION_BANNERS.length].imageUrl).trim(),
+    title: String(b.title ?? DEFAULT_PROMOTION_BANNERS[idx % DEFAULT_PROMOTION_BANNERS.length].title).trim(),
+    subtitle: String(b.subtitle ?? DEFAULT_PROMOTION_BANNERS[idx % DEFAULT_PROMOTION_BANNERS.length].subtitle).trim(),
+    badge: String(b.badge ?? DEFAULT_PROMOTION_BANNERS[idx % DEFAULT_PROMOTION_BANNERS.length].badge).trim(),
+    link: String(b.link ?? DEFAULT_PROMOTION_BANNERS[idx % DEFAULT_PROMOTION_BANNERS.length].link).trim(),
+    ctaText: String(b.ctaText ?? b.cta_text ?? DEFAULT_PROMOTION_BANNERS[idx % DEFAULT_PROMOTION_BANNERS.length].ctaText).trim(),
+  }));
 }

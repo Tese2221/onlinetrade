@@ -1,6 +1,6 @@
-# MKM
+# Online Trade
 
-MKM is a full-stack fintech and commerce platform with a React frontend, Express backend, and PostgreSQL persistence.
+Online Trade is a full-stack fintech and commerce platform with a React frontend, Express backend, and PostgreSQL persistence.
 
 ## Stack
 
@@ -68,3 +68,5 @@ npm run db:seed
 ## Notes
 
 This project includes working wallet and financial foundation logic, admin routes, customer flows, support config, and app download configuration. The codebase remains under active business-spec verification, so any deployment or production rollout should be reviewed against the exact legal, financial, and operational requirements of the business.
+
+Promotion administrators can configure wheel prize pools and weights, the daily spin cap and refresh interval, multiplier odds, and the game's stake presets and maximum stake. The server validates all settings and records changes in the admin audit log. The default limits are four banked daily spins refreshed every 24 hours, and game presets of 10/20/50/100 ETB with a 5,000,000,000,000 ETB absolute maximum.

@@ -1,0 +1,64 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <radialGradient id="orangeGlow" cx="35%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#fdba74"/>
+      <stop offset="40%" stop-color="#fb923c"/>
+      <stop offset="80%" stop-color="#ea580c"/>
+      <stop offset="100%" stop-color="#c2410c"/>
+    </radialGradient>
+    <radialGradient id="sliceGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffedd5"/>
+      <stop offset="70%" stop-color="#fed7aa"/>
+      <stop offset="85%" stop-color="#fb923c"/>
+      <stop offset="100%" stop-color="#ea580c"/>
+    </radialGradient>
+    <linearGradient id="orangeBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff7ed"/>
+      <stop offset="100%" stop-color="#ffedd5"/>
+    </linearGradient>
+    <linearGradient id="orangeLeaf" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#84cc16"/>
+      <stop offset="100%" stop-color="#166534"/>
+    </linearGradient>
+    <filter id="orangeShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#c2410c" flood-opacity="0.2"/>
+    </filter>
+  </defs>
+
+  <rect width="400" height="400" rx="36" fill="url(#orangeBg)"/>
+  <circle cx="200" cy="210" r="145" fill="#ffffff" opacity="0.6"/>
+  <ellipse cx="200" cy="335" rx="110" ry="22" fill="#000000" opacity="0.12"/>
+
+  <g filter="url(#orangeShadow)">
+    <!-- Leaves & Stem -->
+    <path d="M 195 130 C 190 90 205 70 215 65 C 213 78 206 100 200 130 Z" fill="#78350f"/>
+    <path d="M 200 110 C 235 85 285 95 295 115 C 275 140 230 140 200 110 Z" fill="url(#orangeLeaf)"/>
+    <path d="M 205 110 Q 250 110 288 116" stroke="#bbf7d0" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+    
+    <!-- Whole Orange Sphere -->
+    <circle cx="180" cy="225" r="95" fill="url(#orangeGlow)"/>
+
+    <!-- Subtle Orange Peel Dimples / Highlights -->
+    <ellipse cx="145" cy="180" rx="35" ry="18" transform="rotate(-30 145 180)" fill="#ffffff" opacity="0.28"/>
+    <ellipse cx="130" cy="235" rx="15" ry="25" fill="#ffffff" opacity="0.15"/>
+
+    <!-- Foreground Slice -->
+    <g transform="translate(255, 260) rotate(-15)">
+      <!-- Outer Rind -->
+      <circle cx="0" cy="0" r="60" fill="url(#sliceGlow)"/>
+      <circle cx="0" cy="0" r="54" fill="#ffffff" opacity="0.85"/>
+      <circle cx="0" cy="0" r="48" fill="#ea580c"/>
+      <!-- Segments -->
+      <path d="M -4 0 L -30 -30 A 44 44 0 0 1 -5 -44 Z" fill="#fb923c"/>
+      <path d="M 0 -4 L 5 -44 A 44 44 0 0 1 30 -30 Z" fill="#fb923c"/>
+      <path d="M 4 0 L 30 -30 A 44 44 0 0 1 44 -5 Z" fill="#fb923c"/>
+      <path d="M 4 4 L 44 5 A 44 44 0 0 1 30 30 Z" fill="#fb923c"/>
+      <path d="M 0 4 L 30 30 A 44 44 0 0 1 5 44 Z" fill="#fb923c"/>
+      <path d="M -4 4 L -5 44 A 44 44 0 0 1 -30 30 Z" fill="#fb923c"/>
+      <path d="M -4 0 L -30 30 A 44 44 0 0 1 -44 5 Z" fill="#fb923c"/>
+      <path d="M -4 -4 L -44 -5 A 44 44 0 0 1 -30 -30 Z" fill="#fb923c"/>
+      <!-- Center Core -->
+      <circle cx="0" cy="0" r="8" fill="#ffedd5"/>
+    </g>
+  </g>
+</svg>

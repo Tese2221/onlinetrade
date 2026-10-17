@@ -3,12 +3,20 @@ import crypto from 'node:crypto';
 import { Router } from 'express';
 import { z } from 'zod';
 import { normalizeAdminSettings } from '../lib/adminSettings.js';
-import { normalizePublicLinks } from '../lib/supportSettings.js';
+import { normalizePublicLinks, normalizePromotionBanners, DEFAULT_PROMOTION_BANNERS } from '../lib/supportSettings.js';
 import { validateAccountNumber } from '../lib/bankValidation.js';
 import { ADMIN_PRIVILEGES, normalizePrivileges, hasPrivilege } from '../lib/adminPrivileges.js';
+<<<<<<< HEAD
 import { inTransaction, pool } from '../db/pool.js';
 import { requireAdmin, requireAdminPrivilege, requireAuth } from '../middleware/auth.js';
 import { createUserRateLimit } from '../middleware/userRateLimit.js';
+=======
+import { runIdempotent } from '../db/idempotency.js';
+import { inTransaction, pool } from '../db/pool.js';
+import { requireAdmin, requireAdminPrivilege, requireAuth } from '../middleware/auth.js';
+import { createUserRateLimit } from '../middleware/userRateLimit.js';
+import { postWalletMovement } from '../services/wallet.js';
+>>>>>>> d1aaf18 (Update OnlineTrade project)
 
 export const adminRouter = Router();
 adminRouter.use(requireAuth, requireAdmin);
@@ -182,6 +190,80 @@ const customerStatusSchema = z.object({
   adminPassword: z.string().min(1).max(128).optional(),
 });
 
+<<<<<<< HEAD
+=======
+adminRouter.post('/customers/:id/penalties', requireAdminPrivilege('CUSTOMER_MANAGE'), async (request, response, next) => {
+  try {
+    const parsedId = z.string().uuid().safeParse(request.params.id);
+    const parsedBody = z.object({
+      amount: z.string().regex(/^(?:0|[1-9]\d{0,17})(?:\.\d{1,2})?$/),
+      comment: z.string().trim().min(1).max(1000),
+    }).safeParse(request.body);
+    if (!parsedId.success || !parsedBody.success) {
+      return response.status(400).json({
+        success: false,
+        message: parsedBody.success ? 'Invalid customer ID.' : parsedBody.error.issues[0]?.message ?? 'Enter a valid penalty amount and reason.',
+        code: 'VALIDATION_ERROR',
+      });
+    }
+    const [wholeAmount, fractionAmount = ''] = parsedBody.data.amount.split('.');
+    if (BigInt(wholeAmount) * 100n + BigInt(fractionAmount.padEnd(2, '0')) <= 0n) {
+      return response.status(400).json({ success: false, message: 'Penalty amount must be greater than zero.', code: 'VALIDATION_ERROR' });
+    }
+
+    const outcome = await inTransaction(async (client) => runIdempotent(client, {
+      userId: request.auth.userId,
+      operation: `admin.customer.${parsedId.data}.penalty`,
+      key: request.get('Idempotency-Key'),
+      payload: parsedBody.data,
+    }, async () => {
+      const customer = await client.query(
+        "SELECT id, full_name FROM users WHERE id = $1 AND role = 'CUSTOMER' FOR UPDATE",
+        [parsedId.data],
+      );
+      if (!customer.rowCount) {
+        throw Object.assign(new Error('Customer not found.'), { status: 404, code: 'NOT_FOUND' });
+      }
+      const referenceId = crypto.randomUUID();
+      const movement = await postWalletMovement(client, {
+        userId: parsedId.data,
+        amount: parsedBody.data.amount,
+        direction: 'DEBIT',
+        transactionType: 'ADJUSTMENT',
+        insufficientBalanceMessage: 'Penalty exceeds the customer’s available balance.',
+        referenceId,
+        referenceType: 'customer_penalty',
+        externalReference: `customer-penalty:${referenceId}`,
+        description: `Admin penalty: ${parsedBody.data.comment}`,
+      });
+      await client.query(
+        "INSERT INTO notifications(user_id, title, message, type) VALUES ($1, 'Balance penalty', $2, 'CUSTOMER_PENALTY')",
+        [parsedId.data, `${parsedBody.data.amount} ETB was deducted from your available balance. Reason: ${parsedBody.data.comment}`],
+      );
+      await client.query(
+        'INSERT INTO audit_logs(admin_id, action, entity_type, entity_id, old_value, new_value) VALUES ($1, $2, $3, $4, $5, $6)',
+        [request.auth.userId, 'CUSTOMER_PENALTY', 'user', parsedId.data, null, {
+          amount: parsedBody.data.amount,
+          comment: parsedBody.data.comment,
+          availableBalance: movement.availableBalance,
+          referenceId,
+        }],
+      );
+      return {
+        status: 200,
+        body: {
+          success: true,
+          data: { customerId: parsedId.data, amount: parsedBody.data.amount, availableBalance: movement.availableBalance },
+        },
+      };
+    }));
+    response.status(outcome.status).json(outcome.body);
+  } catch (error) {
+    next(error);
+  }
+});
+
+>>>>>>> d1aaf18 (Update OnlineTrade project)
 adminRouter.patch('/customers/:id/status', requireAdminPrivilege('CUSTOMER_MANAGE'), async (request, response, next) => {
   try {
     const parsedId = z.string().uuid().safeParse(request.params.id);
@@ -861,6 +943,37 @@ adminRouter.put('/settings/links', async (request, response, next) => {
   }
 });
 
+<<<<<<< HEAD
+=======
+adminRouter.get('/settings/banners', async (_request, response, next) => {
+  try {
+    const result = await pool.query("SELECT value FROM settings WHERE key = 'promotion_banners'");
+    const payload = result.rows[0]?.value ?? [];
+    const normalized = normalizePromotionBanners(payload);
+    response.json({ success: true, data: { items: normalized } });
+  } catch (error) {
+    next(error);
+  }
+});
+
+adminRouter.put('/settings/banners', async (request, response, next) => {
+  try {
+    const source = Array.isArray(request.body) ? request.body : request.body?.items ?? request.body?.banners ?? [];
+    const sanitized = normalizePromotionBanners(source);
+    await pool.query(
+      `INSERT INTO settings(key, value, updated_by, updated_at)
+       VALUES ('promotion_banners', $1::jsonb, $2, now())
+       ON CONFLICT (key) DO UPDATE SET value = EXCLUDED.value, updated_by = EXCLUDED.updated_by, updated_at = now()`,
+      [JSON.stringify(sanitized), request.auth.userId],
+    );
+
+    response.json({ success: true, data: { items: sanitized } });
+  } catch (error) {
+    next(error);
+  }
+});
+
+>>>>>>> d1aaf18 (Update OnlineTrade project)
 // ---------------------------------------------------------------------------
 // ADMIN PROFILE MANAGEMENT
 // ---------------------------------------------------------------------------

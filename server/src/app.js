@@ -38,6 +38,7 @@ import {
 } from './routes/withdrawals.js';
 import { withdrawalAccountsRouter } from './routes/withdrawalAccounts.js';
 import { adminUploadsRouter } from './routes/uploads.js';
+import { adminPromotionsRouter, promotionsRouter } from './routes/promotions.js';
 import { publicUploadDirectory } from './lib/publicUploads.js';
 import { requireTrustedOrigin } from './middleware/trustedOrigin.js';
 
@@ -124,6 +125,13 @@ app.use('/api/admin/referrals', adminReferralsRouter);
 
 app.use('/api/admin/uploads', adminUploadsRouter);
 
+<<<<<<< HEAD
+=======
+app.use('/api/admin/promotions', adminPromotionsRouter);
+
+app.use('/api/promotions', promotionsRouter);
+
+>>>>>>> d1aaf18 (Update OnlineTrade project)
 app.use('/api/products', productsRouter);
 
 app.use('/api/payment-methods', paymentMethodsRouter);

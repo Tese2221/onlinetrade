@@ -5,9 +5,11 @@ INSERT INTO users (
   withdrawal_password_hash,
   referral_code,
   role,
-  status
+  status,
+  is_super_admin,
+  privileges
 )
-SELECT 'MKM Administrator', '900000000', '$argon2id$v=19$m=65536,t=3,p=4$9mW+Uant8ReQdjzh4dqGag$4aH3BtR9oOL7ekJFed1G0eAzGoS7sI+OC4qKiOYN3es', '$argon2id$v=19$m=65536,t=3,p=4$9mW+Uant8ReQdjzh4dqGag$4aH3BtR9oOL7ekJFed1G0eAzGoS7sI+OC4qKiOYN3es', 'MKM-ADMIN', 'ADMIN', 'ACTIVE'
+SELECT 'Online Trade Administrator', '900000000', '$argon2id$v=19$m=65536,t=3,p=4$9mW+Uant8ReQdjzh4dqGag$4aH3BtR9oOL7ekJFed1G0eAzGoS7sI+OC4qKiOYN3es', '$argon2id$v=19$m=65536,t=3,p=4$9mW+Uant8ReQdjzh4dqGag$4aH3BtR9oOL7ekJFed1G0eAzGoS7sI+OC4qKiOYN3es', 'OT-ADMIN', 'ADMIN', 'ACTIVE', true, '["*"]'::jsonb
 WHERE NOT EXISTS (
   SELECT 1 FROM users WHERE phone_number = '900000000'
 );

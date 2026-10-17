@@ -38,9 +38,23 @@ test('daily task forecast generates one record per active day', () => {
   });
 
   assert.equal(rows.length, 3);
+  assert.equal(rows[0].baseAmount, '1200.00');
   assert.equal(rows[0].calculatedAmount, '96.00');
   assert.equal(rows[0].status, 'WAITING');
   assert.equal(rows.at(-1).businessDate, '2026-10-03');
+});
+
+test('daily task forecasts calculate 5 percent from the full investment amount', () => {
+  const [task] = buildDailyTaskForecast({
+    amount: 300,
+    dailyRate: 0.05,
+    activatedAt: '2026-10-01T08:00:00.000Z',
+    expiresAt: '2026-10-01T08:00:00.000Z',
+  });
+
+  assert.equal(task.baseAmount, '300.00');
+  assert.equal(task.configuredRate, '0.050000');
+  assert.equal(task.calculatedAmount, '15.00');
 });
 
 test('default reward rules include the project core reward types', () => {

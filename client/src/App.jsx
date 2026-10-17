@@ -1,17 +1,32 @@
 import { Fragment, useEffect, useMemo, useRef, useState } from 'react';
+<<<<<<< HEAD
 import { ArrowDownToLine, ArrowUpFromLine, Bell, CheckCircle2, CircleAlert, Copy, FileText, Gift, LayoutDashboard, LogOut, Menu, MessageCircle, Package, ShieldCheck, UserCircle, Users, Wallet, X, ZoomIn, ZoomOut } from 'lucide-react';
+=======
+import { ArrowDownToLine, ArrowUpFromLine, Bell, CheckCircle2, ChevronLeft, ChevronRight, CircleAlert, CircleDollarSign, Copy, FileText, Gift, Headphones, LayoutDashboard, LogOut, Menu, MessageCircle, Package, Paperclip, RotateCcw, Send, ShieldCheck, Smartphone, UserCircle, Users, Wallet, X, ZoomIn, ZoomOut } from 'lucide-react';
+>>>>>>> d1aaf18 (Update OnlineTrade project)
 import { BrowserRouter, Link, NavLink, Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import { api, assetUrl, jsonBody } from './services/api.js';
 import PublicWebsite from './PublicWebsite.jsx';
+import { AdminPromotionsPage, CustomerPromotions, MultiplierGamePage } from './Promotions.jsx';
+import PromotionGallery from './PromotionGallery.jsx';
 import welcomePromotionImage from './welcome-promotion.svg';
 import { getProductImage } from './productImages.js';
+import { LanguageProvider, LanguageSwitcher, useLanguage } from './LanguageContext.jsx';
 
 const navItems = [
   { to: '/my', label: 'MY', icon: UserCircle },
+<<<<<<< HEAD
   { to: '/dashboard', label: 'Overview', icon: LayoutDashboard },
   { to: '/products', label: 'Products', icon: Package },
   { to: '/tasks', label: 'Daily Tasks', icon: FileText },
   { to: '/purchases', label: 'My Products', icon: Package },
+=======
+  { to: '/game', label: 'Game', icon: CircleDollarSign },
+  { to: '/dashboard', label: 'Overview', icon: LayoutDashboard },
+  { to: '/products', label: 'Products', icon: Package },
+  { to: '/tasks', label: 'Daily Tasks', icon: FileText },
+  { to: '/purchases', label: 'My Investments', icon: Package },
+>>>>>>> d1aaf18 (Update OnlineTrade project)
   { to: '/recharge', label: 'Recharge', icon: ArrowDownToLine },
   { to: '/recharge/history', label: 'Recharge History', icon: FileText },
   { to: '/withdraw', label: 'Withdraw', icon: ArrowUpFromLine },
@@ -87,11 +102,37 @@ async function uploadAdminImage(file) {
   return api('/admin/uploads/image', { method: 'POST', body: form });
 }
 
+function BankLogo({ name, className = '' }) {
+  const normalized = String(name || '').toLowerCase();
+  let src = '/icons/cbe.svg';
+  let alt = 'Bank logo';
+  if (/telebirr/i.test(normalized)) {
+    src = '/icons/telebirr.svg';
+    alt = 'Telebirr Wallet';
+  } else if (/awash/i.test(normalized)) {
+    src = '/icons/awash.svg';
+    alt = 'Awash Bank';
+  } else if (/abyssinia|boa/i.test(normalized)) {
+    src = '/icons/abyssinia.svg';
+    alt = 'Bank of Abyssinia';
+  } else if (/cbe|commercial/i.test(normalized)) {
+    src = '/icons/cbe.svg';
+    alt = 'Commercial Bank of Ethiopia';
+  }
+  return (
+    <div className={`bank-logo-badge ${className}`}>
+      <img src={src} alt={alt} />
+    </div>
+  );
+}
+
 export default function App() {
   return (
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
+    <LanguageProvider>
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </LanguageProvider>
   );
 }
 
@@ -296,7 +337,11 @@ function AppRoutes() {
     const availableBalance = Number(dashboard?.wallet?.availableBalance);
     if (product && Number.isFinite(availableBalance) && availableBalance < Number(product.price)) {
       setError('');
+<<<<<<< HEAD
       setNotice('You do not have enough balance to buy this product. Recharge your wallet to continue.');
+=======
+      setNotice('You do not have enough balance to invest in this product. Recharge your wallet to continue.');
+>>>>>>> d1aaf18 (Update OnlineTrade project)
       navigate('/recharge');
       return;
     }
@@ -312,11 +357,15 @@ function AppRoutes() {
       resolveIdempotencyKey(`product.purchase.${productId}`);
       await loadDashboard();
       setProducts(await api('/products'));
-      showCustomerSuccess('Product purchased successfully.');
+      showCustomerSuccess('Investment activated successfully.');
     } catch (cause) {
       resolveIdempotencyKey(`product.purchase.${productId}`, cause);
       if (cause.code === 'INSUFFICIENT_BALANCE') {
+<<<<<<< HEAD
         setNotice('You do not have enough balance to buy this product. Recharge your wallet to continue.');
+=======
+        setNotice('You do not have enough balance to invest in this product. Recharge your wallet to continue.');
+>>>>>>> d1aaf18 (Update OnlineTrade project)
         navigate('/recharge');
       } else {
         setError(cause.message);
@@ -380,6 +429,11 @@ function AppRoutes() {
   useEffect(() => {
     api('/auth/me').then(setUser).catch(() => setUser(null)).finally(() => setAuthLoading(false));
   }, []);
+
+  useEffect(() => {
+    if (user) return;
+    api('/config/public').then(setSupport).catch((cause) => setError(cause.message));
+  }, [user]);
 
   useEffect(() => {
     if (!user) return;
@@ -500,7 +554,7 @@ function AppRoutes() {
     return (
       <div className='auth-loading-splash'>
         <div className='auth-loading-inner'>
-          <span className='brand-mark'>M</span>
+          <span className='brand-mark'>OT</span>
           <p>Loading…</p>
         </div>
       </div>
@@ -510,8 +564,13 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path='/' element={user ? <Navigate to={user.role === 'ADMIN' ? '/admin' : '/welcome'} replace /> : <PublicWebsite user={null} onPurchase={purchase} busy={busy} />} />
+<<<<<<< HEAD
       <Route path='/login' element={user ? <Navigate to={user.role === 'ADMIN' ? '/admin' : '/welcome'} replace /> : <AuthScreen auth={auth} setAuth={setAuth} mode='login' onSubmit={submitAuth} onSwitchMode={() => navigate(`/register${location.search}`)} busy={busy} error={error} onDismissError={() => setError('')} appDownloadUrl={support?.appDownloadUrl} />} />
       <Route path='/register' element={user ? <Navigate to={user.role === 'ADMIN' ? '/admin' : '/welcome'} replace /> : <AuthScreen auth={auth} setAuth={setAuth} mode='register' onSubmit={submitAuth} onSwitchMode={() => navigate('/login')} busy={busy} error={error} onDismissError={() => setError('')} appDownloadUrl={support?.appDownloadUrl} />} />
+=======
+      <Route path='/login' element={user ? <Navigate to={user.role === 'ADMIN' ? '/admin' : '/welcome'} replace /> : <AuthScreen auth={auth} setAuth={setAuth} mode='login' onSubmit={submitAuth} onSwitchMode={() => navigate(`/register${location.search}`)} busy={busy} error={error} onDismissError={() => setError('')} support={support} />} />
+      <Route path='/register' element={user ? <Navigate to={user.role === 'ADMIN' ? '/admin' : '/welcome'} replace /> : <AuthScreen auth={auth} setAuth={setAuth} mode='register' onSubmit={submitAuth} onSwitchMode={() => navigate('/login')} busy={busy} error={error} onDismissError={() => setError('')} support={support} />} />
+>>>>>>> d1aaf18 (Update OnlineTrade project)
       <Route path='/admin/login' element={user ? (user.role === 'ADMIN' ? <Navigate to='/admin' replace /> : <Navigate to='/dashboard' replace />) : <AdminLoginScreen auth={auth} setAuth={setAuth} onSubmit={submitAdminAuth} busy={busy} error={error} onDismissError={() => setError('')} />} />
       <Route path='/admin' element={!user ? <Navigate to='/admin/login' replace /> : user.role === 'ADMIN' ? <ProtectedAdminApp user={user} onSignOut={signOut} busy={busy} notice={notice} error={error} setError={setError} setNotice={setNotice} /> : <AdminAccessDenied />} />
       <Route path='/admin/*' element={!user ? <Navigate to='/admin/login' replace /> : user.role === 'ADMIN' ? <ProtectedAdminApp user={user} onSignOut={signOut} busy={busy} notice={notice} error={error} setError={setError} setNotice={setNotice} /> : <AdminAccessDenied />} />
@@ -679,7 +738,10 @@ function ProtectedAdminApp({ user, onSignOut, busy, notice, error, setError, set
     { to: '/admin/audit-logs', label: 'Audit Logs' },
     { to: '/admin/products', label: 'Products' },
     { to: '/admin/payment-methods', label: 'Payment Methods' },
+    { to: '/admin/banners', label: 'Promotion Banners' },
+    { to: '/admin/promotions', label: 'Gifts & Wheel' },
     { to: '/admin/support', label: 'Support' },
+    { to: '/admin/support/chat', label: 'Chat Inbox' },
     { to: '/admin/about', label: 'About Page' },
     { to: '/admin/welcome', label: 'Welcome Page' },
     { to: '/admin/settings/links', label: 'Public Links' },
@@ -723,14 +785,23 @@ function ProtectedAdminApp({ user, onSignOut, busy, notice, error, setError, set
     if (currentPath === '/admin/payment-methods') {
       return <AdminPaymentMethodsPage methods={paymentMethods} />;
     }
+    if (currentPath === '/admin/banners') {
+      return <AdminPromotionBannersPage support={support} onRefresh={() => api('/admin/support').then(setSupport)} />;
+    }
     if (currentPath === '/admin/support') {
       return <AdminSupportPage support={support} onSave={saveSupport} />;
+    }
+    if (currentPath === '/admin/support/chat') {
+      return <AdminSupportInboxPage />;
     }
     if (currentPath === '/admin/about') {
       return <AdminAboutPage support={support} onSave={saveAboutPage} />;
     }
     if (currentPath === '/admin/welcome') {
       return <AdminWelcomePage support={support} onSave={saveWelcomePage} onUploadImage={uploadAdminImage} onError={setError} />;
+    }
+    if (currentPath === '/admin/promotions') {
+      return <AdminPromotionsPage />;
     }
     if (currentPath === '/admin/settings/links') {
       return <AdminPublicLinksPage />;
@@ -743,8 +814,13 @@ function ProtectedAdminApp({ user, onSignOut, busy, notice, error, setError, set
       <aside className='sidebar'>
         <div className='sidebar-heading'>
           <NavLink to='/admin' className='brand' end>
+<<<<<<< HEAD
             <span className='brand-mark'>A</span>
             <span>MKM Admin<span className='brand-caption'>ADMIN PANEL</span></span>
+=======
+            <span className='brand-mark'>OT</span>
+            <span>Online Trade Admin<span className='brand-caption'>ADMIN PANEL</span></span>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
           </NavLink>
           <button className='workspace-menu-toggle' type='button' aria-expanded={navOpen} aria-controls='admin-navigation' aria-label={navOpen ? 'Close admin navigation' : 'Open admin navigation'} onClick={() => setNavOpen((open) => !open)}>
             {navOpen ? <X size={20} /> : <Menu size={20} />}
@@ -753,7 +829,11 @@ function ProtectedAdminApp({ user, onSignOut, busy, notice, error, setError, set
         <p className='nav-label'>ADMIN</p>
         <nav id='admin-navigation' className={navOpen ? 'is-open' : ''} aria-label='Admin navigation'>
           {adminNavItems.map(({ to, label }) => (
+<<<<<<< HEAD
             <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive || (to === '/admin' && isDashboard) ? 'active' : ''}`} end={to === '/admin'}>
+=======
+            <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive || (to === '/admin' && isDashboard) ? 'active' : ''}`} end>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
               {label}
             </NavLink>
           ))}
@@ -787,7 +867,11 @@ function ProtectedAdminApp({ user, onSignOut, busy, notice, error, setError, set
             <div className='customer-mobile-menu-grid'>
               {adminNavItems.map(({ to, label }) => (
                 <NavLink key={to} to={to} className={({ isActive }) => `customer-mobile-menu-link ${isActive || (to === '/admin' && isDashboard) ? 'active' : ''}`} end={to === '/admin'}>
+<<<<<<< HEAD
                   <span>{label}</span>
+=======
+                  <span>{t(label)}</span>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
                 </NavLink>
               ))}
               <button type='button' className='customer-mobile-menu-link admin-mobile-logout' onClick={onSignOut}><LogOut size={18} /><span>Log out</span></button>
@@ -816,13 +900,31 @@ function AdminDashboardPage({ stats }) {
     <>
       <div className='metric-grid'>
         <Metric label='Total customers' value={data.total_customers ?? 0} />
-        <Metric label='Customers with purchases' value={data.active_customers ?? 0} />
+        <Metric label='Customers with investments' value={data.active_customers ?? 0} />
         <Metric label='Pending recharges' value={data.pending_recharges ?? 0} />
         <Metric label='Approved recharge total' value={money(data.approved_recharge_total ?? 0)} />
         <Metric label='Pending withdrawals' value={data.pending_withdrawals ?? 0} />
         <Metric label='Completed withdrawal total' value={money(data.completed_withdrawal_total ?? 0)} />
         <Metric label='Total products' value={data.total_products ?? 0} />
         <Metric label='Active products' value={data.active_products ?? 0} />
+      </div>
+      <div className='dashboard-quick-actions' aria-label='Admin shortcuts'>
+        <Link className='dashboard-quick-action' to='/admin/products'>
+          <Package size={19} aria-hidden='true' />
+          <span><strong>Products</strong><small>Manage product listings</small></span>
+        </Link>
+        <Link className='dashboard-quick-action' to='/admin/support/chat'>
+          <MessageCircle size={19} aria-hidden='true' />
+          <span><strong>Chat Inbox</strong><small>View customer messages</small></span>
+        </Link>
+        <Link className='dashboard-quick-action' to='/admin/withdrawals'>
+          <ArrowUpFromLine size={19} aria-hidden='true' />
+          <span><strong>Withdrawals</strong><small>Review payout requests</small></span>
+        </Link>
+        <Link className='dashboard-quick-action' to='/admin/recharges'>
+          <ArrowDownToLine size={19} aria-hidden='true' />
+          <span><strong>Recharges</strong><small>Review deposit requests</small></span>
+        </Link>
       </div>
     </>
   );
@@ -840,6 +942,17 @@ function AdminCustomersPage({ customers: initialCustomers, paymentMethods, onErr
   const [editAccountId, setEditAccountId] = useState(null);
   const [pendingCustomerId, setPendingCustomerId] = useState(null);
   const [notice, setNotice] = useState('');
+  const [penaltyInputs, setPenaltyInputs] = useState({});
+  const penaltyKeys = useRef({});
+
+  // Details modal state
+  const [viewCustomerDetails, setViewCustomerDetails] = useState(null);
+  const [detailsLoading, setDetailsLoading] = useState(false);
+
+  // Deactivate modal state
+  const [deactivatingCustomer, setDeactivatingCustomer] = useState(null);
+  const [deactivateReason, setDeactivateReason] = useState('');
+  const [deactivateAdminPassword, setDeactivateAdminPassword] = useState('');
 
   // Details modal state
   const [viewCustomerDetails, setViewCustomerDetails] = useState(null);
@@ -885,6 +998,46 @@ function AdminCustomersPage({ customers: initialCustomers, paymentMethods, onErr
     }
   }
 
+<<<<<<< HEAD
+=======
+  async function applyPenalty(event, customer) {
+    event.preventDefault();
+    const input = penaltyInputs[customer.id] ?? {};
+    const amount = String(input.amount ?? '').trim();
+    const comment = String(input.comment ?? '').trim();
+    if (!/^(?:0|[1-9]\d{0,17})(?:\.\d{1,2})?$/.test(amount) || Number(amount) <= 0) {
+      onError('Enter a valid penalty amount greater than zero.');
+      return;
+    }
+    if (!comment) {
+      onError('Enter a reason for the customer penalty.');
+      return;
+    }
+    if (!window.confirm(`Deduct ${money(amount)} from ${customer.fullName}'s available balance?\n\nReason: ${comment}\n\nThe customer will be notified.`)) {
+      return;
+    }
+    setPendingCustomerId(customer.id);
+    onError('');
+    setNotice('');
+    try {
+      penaltyKeys.current[customer.id] ??= crypto.randomUUID();
+      await api(`/admin/customers/${customer.id}/penalties`, {
+        method: 'POST',
+        idempotencyKey: penaltyKeys.current[customer.id],
+        ...jsonBody({ amount, comment }),
+      });
+      delete penaltyKeys.current[customer.id];
+      setPenaltyInputs((current) => ({ ...current, [customer.id]: { amount: '', comment: '' } }));
+      setNotice(`Deducted ${money(amount)} from ${customer.fullName}. They were notified.`);
+      await loadCustomers(pagination.page);
+    } catch (cause) {
+      onError(cause.message);
+    } finally {
+      setPendingCustomerId(null);
+    }
+  }
+
+>>>>>>> d1aaf18 (Update OnlineTrade project)
   async function saveCustomerProfile(event, customer) {
     event.preventDefault();
     const form = event.currentTarget;
@@ -1052,7 +1205,11 @@ function AdminCustomersPage({ customers: initialCustomers, paymentMethods, onErr
             <div className='metric'><span>Locked Wallet</span><strong>{money(viewCustomerDetails.wallet?.lockedBalance ?? 0)}</strong></div>
             <div className='metric'><span>Approved Deposits</span><strong className='green'>{money(viewCustomerDetails.recharges?.approvedTotal ?? 0)} ({viewCustomerDetails.recharges?.count ?? 0})</strong></div>
             <div className='metric'><span>Completed Payouts</span><strong>{money(viewCustomerDetails.withdrawals?.completedTotal ?? 0)} ({viewCustomerDetails.withdrawals?.count ?? 0})</strong></div>
+<<<<<<< HEAD
             <div className='metric'><span>Active Packages</span><strong className='green'>{viewCustomerDetails.purchases?.activeCount ?? 0}</strong></div>
+=======
+            <div className='metric'><span>Active Investments</span><strong className='green'>{viewCustomerDetails.purchases?.activeCount ?? 0}</strong></div>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
           </div>
           {viewCustomerDetails.recentTransactions?.length > 0 && (
             <div style={{ marginTop: '14px' }}>
@@ -1093,7 +1250,11 @@ function AdminCustomersPage({ customers: initialCustomers, paymentMethods, onErr
           </div>
           <p style={{ fontSize: '13px', color: '#7f1d1d', margin: '8px 0' }}>
             Deactivating this customer will immediately revoke all their active login sessions. They will be prohibited from signing in or accessing account services.
+<<<<<<< HEAD
             <strong> All financial records, wallets, purchase history, ledger entries, and audit logs remain strictly preserved.</strong>
+=======
+            <strong> All financial records, wallets, investment history, ledger entries, and audit logs remain strictly preserved.</strong>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
           </p>
           <div className='form-stack' style={{ maxWidth: '420px', marginTop: '12px' }}>
             <label className='field'>
@@ -1134,7 +1295,7 @@ function AdminCustomersPage({ customers: initialCustomers, paymentMethods, onErr
       )}
 
       {customers.length ? (
-        <div className='table-wrap'>
+        <div className='table-wrap admin-compact-table admin-customers-table'>
           <table>
             <thead>
               <tr>
@@ -1144,6 +1305,10 @@ function AdminCustomersPage({ customers: initialCustomers, paymentMethods, onErr
                 <th>Wallet Balance</th>
                 <th>Referral</th>
                 <th>Withdrawal accounts</th>
+<<<<<<< HEAD
+=======
+                <th>Penalty</th>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
                 <th>Registered</th>
                 <th>Customer actions</th>
               </tr>
@@ -1207,6 +1372,45 @@ function AdminCustomersPage({ customers: initialCustomers, paymentMethods, onErr
                       )}
                     </section>
                   )) : '—'}</td>
+<<<<<<< HEAD
+=======
+                  <td>
+                    {customer.role === 'CUSTOMER' ? (
+                      <form className='customer-penalty-form' onSubmit={(event) => applyPenalty(event, customer)}>
+                        <label>
+                          <span>Amount (ETB)</span>
+                          <input
+                            type='number'
+                            min='0.01'
+                            step='0.01'
+                            value={penaltyInputs[customer.id]?.amount ?? ''}
+                            onChange={(event) => setPenaltyInputs((current) => ({
+                              ...current,
+                              [customer.id]: { ...current[customer.id], amount: event.target.value },
+                            }))}
+                            required
+                          />
+                        </label>
+                        <label>
+                          <span>Reason</span>
+                          <textarea
+                            value={penaltyInputs[customer.id]?.comment ?? ''}
+                            onChange={(event) => setPenaltyInputs((current) => ({
+                              ...current,
+                              [customer.id]: { ...current[customer.id], comment: event.target.value },
+                            }))}
+                            maxLength={1000}
+                            rows={2}
+                            required
+                          />
+                        </label>
+                        <button className='secondary-button' type='submit' disabled={pendingCustomerId === customer.id}>
+                          {pendingCustomerId === customer.id ? 'Applying…' : 'Deduct & notify'}
+                        </button>
+                      </form>
+                    ) : '—'}
+                  </td>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
                   <td>{new Date(customer.registeredAt).toLocaleDateString()}</td>
                   <td>
                     <div className='form-stack' style={{ gap: '6px' }}>
@@ -1219,6 +1423,17 @@ function AdminCustomersPage({ customers: initialCustomers, paymentMethods, onErr
                       >
                         View details
                       </button>
+<<<<<<< HEAD
+=======
+                      {customer.role === 'CUSTOMER' && (
+                        <Link
+                          className='secondary-button admin-customer-chat-link'
+                          to={`/admin/support/chat?customerId=${encodeURIComponent(customer.id)}&customerName=${encodeURIComponent(customer.fullName)}`}
+                        >
+                          <MessageCircle size={14} aria-hidden='true' /> Chat
+                        </Link>
+                      )}
+>>>>>>> d1aaf18 (Update OnlineTrade project)
 
                       {customer.role === 'CUSTOMER' && (
                         resetCustomerId === customer.id ? (
@@ -1986,7 +2201,7 @@ function AdminProductsPage({ products, onUploadImage }) {
   const [form, setForm] = useState({
     name: '',
     price: '300.00',
-    dailyRate: '24',
+    dailyRate: '5',
     durationDays: 30,
     description: '',
     status: 'AVAILABLE',
@@ -2010,7 +2225,7 @@ function AdminProductsPage({ products, onUploadImage }) {
     setForm({
       name: product.name ?? '',
       price: String(product.price ?? '300.00'),
-      dailyRate: String(rateFraction(product.dailyRate ?? 0.24) * 100),
+      dailyRate: String(rateFraction(product.dailyRate ?? 0.05) * 100),
       durationDays: Number(product.durationDays ?? 30),
       description: product.description ?? '',
       status: product.status ?? 'AVAILABLE',
@@ -2068,7 +2283,7 @@ function AdminProductsPage({ products, onUploadImage }) {
       setForm({
         name: '',
         price: '300.00',
-        dailyRate: '24',
+        dailyRate: '5',
         durationDays: 30,
         description: '',
         status: 'AVAILABLE',
@@ -2187,7 +2402,7 @@ function AdminProductsPage({ products, onUploadImage }) {
             {editingId ? 'Update Product' : 'Add New Product'} <span>↗</span>
           </button>
           {editingId && (
-            <button className='secondary-button' type='button' onClick={() => { setEditingId(null); setForm({ name: '', price: '300.00', dailyRate: '24', durationDays: 30, description: '', status: 'AVAILABLE', imageUrl: '', availableFrom: '', availableUntil: '', displayOrder: items.length + 1 }); }}>
+            <button className='secondary-button' type='button' onClick={() => { setEditingId(null); setForm({ name: '', price: '300.00', dailyRate: '5', durationDays: 30, description: '', status: 'AVAILABLE', imageUrl: '', availableFrom: '', availableUntil: '', displayOrder: items.length + 1 }); }}>
               Cancel Edit
             </button>
           )}
@@ -2325,6 +2540,11 @@ function AdminPaymentMethodsPage({ methods }) {
     });
   };
 
+  const cancelEdit = () => {
+    setEditingId(null);
+    setForm({ name: '', type: 'BANK', accountNumber: '', accountName: '', phoneNumber: '', instructions: '', isActive: true, displayOrder: 0 });
+  };
+
   const toggleState = async (method, isActive) => {
     await api(`/admin/payment-methods/${method.id}`, { method: 'PUT', ...jsonBody({ ...method, isActive }) });
     await refreshMethods();
@@ -2334,44 +2554,167 @@ function AdminPaymentMethodsPage({ methods }) {
     <section className='surface form-surface form-stack'>
       <div className='surface-heading'>
         <div>
-          <p className='eyebrow'>PAYMENT METHODS</p>
-          <h3>Bank and wallet methods</h3>
+          <p className='eyebrow'>PAYMENT GATEWAYS</p>
+          <h3>Bank and Wallet Configuration</h3>
         </div>
       </div>
 
-      <form onSubmit={submit} className='surface nested-surface form-stack'>
-        <div className='profile-form-grid'>
-          <label className='field'><span>Name</span><input value={form.name} onChange={(event) => setForm({ ...form, name: event.target.value })} required /></label>
-          <label className='field'><span>Type</span><select value={form.type} onChange={(event) => setForm({ ...form, type: event.target.value })}><option value='BANK'>BANK</option><option value='MOBILE'>MOBILE</option></select></label>
+      <p className='form-subtitle'>
+        Configure bank account numbers, beneficiary names, and wallet details. Changes saved here immediately update the payment information displayed to customers making deposits.
+      </p>
+
+      <form onSubmit={submit} className='surface nested-surface form-stack admin-payment-config-form'>
+        <div className='surface-heading compact-heading'>
+          <div>
+            <p className='eyebrow'>{editingId ? 'EDITING ACCOUNT' : 'ADD NEW METHOD'}</p>
+            <h4>{editingId ? `Edit Account: ${form.name}` : 'Create Payment Method'}</h4>
+          </div>
+          {editingId && (
+            <button type='button' className='secondary-button' onClick={cancelEdit}>
+              Cancel Edit
+            </button>
+          )}
         </div>
+
         <div className='profile-form-grid'>
-          <label className='field'><span>Account number</span><input value={form.accountNumber} onChange={(event) => setForm({ ...form, accountNumber: event.target.value })} /></label>
-          <label className='field'><span>Account name</span><input value={form.accountName} onChange={(event) => setForm({ ...form, accountName: event.target.value })} /></label>
+          <label className='field'>
+            <span>Method / Bank Name</span>
+            <input
+              value={form.name}
+              onChange={(event) => setForm({ ...form, name: event.target.value })}
+              placeholder='e.g. Commercial Bank of Ethiopia, Awash Bank'
+              required
+            />
+          </label>
+          <label className='field'>
+            <span>Type</span>
+            <select value={form.type} onChange={(event) => setForm({ ...form, type: event.target.value })}>
+              <option value='BANK'>BANK TRANSFER</option>
+              <option value='MOBILE'>MOBILE MONEY / WALLET</option>
+            </select>
+          </label>
         </div>
+
         <div className='profile-form-grid'>
-          <label className='field'><span>Phone number</span><input value={form.phoneNumber} onChange={(event) => setForm({ ...form, phoneNumber: event.target.value })} /></label>
-          <label className='field'><span>Display order</span><input type='number' min='0' value={form.displayOrder} onChange={(event) => setForm({ ...form, displayOrder: Number(event.target.value) })} /></label>
+          <label className='field'>
+            <span>Account Number (Configurable for Customer Deposits)</span>
+            <input
+              value={form.accountNumber}
+              onChange={(event) => setForm({ ...form, accountNumber: event.target.value })}
+              placeholder='e.g. 1000419637649'
+            />
+            <small>This is the account number shown to customers with 1-click copy.</small>
+          </label>
+          <label className='field'>
+            <span>Account Holder / Beneficiary Name</span>
+            <input
+              value={form.accountName}
+              onChange={(event) => setForm({ ...form, accountName: event.target.value })}
+              placeholder='e.g. Online Trade Ltd / Tesema'
+            />
+            <small>Beneficiary name shown on customer deposit screen.</small>
+          </label>
         </div>
-        <label className='field'><span>Instructions</span><textarea rows='3' value={form.instructions} onChange={(event) => setForm({ ...form, instructions: event.target.value })} /></label>
-        <label className='field checkbox-field'><input type='checkbox' checked={form.isActive} onChange={(event) => setForm({ ...form, isActive: event.target.checked })} /><span>Active</span></label>
-        <button className='primary-button' type='submit'>{editingId ? 'Update method' : 'Add method'}<span>↗</span></button>
+
+        <div className='profile-form-grid'>
+          <label className='field'>
+            <span>Phone Number (for Telebirr / Mobile Money)</span>
+            <input
+              value={form.phoneNumber}
+              onChange={(event) => setForm({ ...form, phoneNumber: event.target.value })}
+              placeholder='e.g. 0929688828'
+            />
+          </label>
+          <label className='field'>
+            <span>Display Order (1 = Top)</span>
+            <input
+              type='number'
+              min='0'
+              value={form.displayOrder}
+              onChange={(event) => setForm({ ...form, displayOrder: Number(event.target.value) })}
+            />
+          </label>
+        </div>
+
+        <label className='field'>
+          <span>Deposit Instructions / Notes for Member</span>
+          <textarea
+            rows='2'
+            value={form.instructions}
+            onChange={(event) => setForm({ ...form, instructions: event.target.value })}
+            placeholder='Optional instructions shown to customers when selecting this payment method'
+          />
+        </label>
+
+        <label className='field checkbox-field'>
+          <input
+            type='checkbox'
+            checked={form.isActive}
+            onChange={(event) => setForm({ ...form, isActive: event.target.checked })}
+          />
+          <span>Active (Available for customer recharge)</span>
+        </label>
+
+        <div className='button-row'>
+          <button className='primary-button' type='submit'>
+            {editingId ? 'Save Account Changes' : 'Add Payment Method'}
+            <span>✓</span>
+          </button>
+          {editingId && (
+            <button type='button' className='secondary-button' onClick={cancelEdit}>
+              Cancel
+            </button>
+          )}
+        </div>
       </form>
 
       {items.length ? (
         <div className='table-wrap'>
-          <table>
-            <thead><tr><th>Name</th><th>Account</th><th>Owner</th><th>Status</th><th>Actions</th></tr></thead>
+          <table className='admin-payment-methods-table'>
+            <thead>
+              <tr>
+                <th>Bank / Method</th>
+                <th>Account Number</th>
+                <th>Account Holder</th>
+                <th>Order</th>
+                <th>Status</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
             <tbody>
               {items.map((method) => (
-                <tr key={method.id}>
-                  <td>{method.name}</td>
-                  <td>{method.accountNumber ?? method.phoneNumber ?? '—'}</td>
-                  <td>{method.accountName ?? method.phoneNumber ?? '—'}</td>
-                  <td>{method.isActive ? 'Active' : 'Disabled'}</td>
+                <tr key={method.id} className={editingId === method.id ? 'row-editing' : ''}>
+                  <td>
+                    <div className='admin-bank-cell'>
+                      <BankLogo name={method.name} className='admin-bank-logo-badge' />
+                      <div>
+                        <strong>{method.name}</strong>
+                        <small className='quiet-label' style={{ display: 'block' }}>{method.type}</small>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <code className='account-num-tag'>{method.accountNumber || method.phoneNumber || '—'}</code>
+                  </td>
+                  <td>{method.accountName || '—'}</td>
+                  <td>{method.displayOrder ?? 0}</td>
+                  <td>
+                    <span className={`status-pill ${method.isActive ? 'active' : 'inactive'}`}>
+                      {method.isActive ? 'Active' : 'Disabled'}
+                    </span>
+                  </td>
                   <td>
                     <div className='button-row compact'>
-                      <button type='button' className='secondary-button' onClick={() => editMethod(method)}>Edit</button>
-                      <button type='button' className='secondary-button' onClick={() => toggleState(method, !method.isActive)}>{method.isActive ? 'Disable' : 'Enable'}</button>
+                      <button type='button' className='secondary-button' onClick={() => editMethod(method)}>
+                        Edit
+                      </button>
+                      <button
+                        type='button'
+                        className='secondary-button'
+                        onClick={() => toggleState(method, !method.isActive)}
+                      >
+                        {method.isActive ? 'Disable' : 'Enable'}
+                      </button>
                     </div>
                   </td>
                 </tr>
@@ -2379,7 +2722,9 @@ function AdminPaymentMethodsPage({ methods }) {
             </tbody>
           </table>
         </div>
-      ) : <Empty>No payment methods found.</Empty>}
+      ) : (
+        <Empty>No payment methods found.</Empty>
+      )}
     </section>
   );
 }
@@ -2393,6 +2738,8 @@ function AdminRechargesPage() {
   const [limit, setLimit] = useState(10);
   const [status, setStatus] = useState('');
   const [search, setSearch] = useState('');
+  const [notes, setNotes] = useState({});
+  const [pendingId, setPendingId] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(true);
 
@@ -2434,12 +2781,25 @@ function AdminRechargesPage() {
     });
   };
 
-  const review = async (id, action, note = '') => {
+  const review = async (id, action, noteOverride = '') => {
+    const note = (noteOverride || notes[id] || '').trim();
+    if (action === 'reject' && !note) {
+      setError('Enter a reason before rejecting this recharge.');
+      return;
+    }
+    if (pendingId) return;
+    setPendingId(id);
     try {
       await api(`/admin/recharges/${id}/${action}`, { method: 'POST', ...jsonBody({ note }) });
+      setNotes((current) => ({ ...current, [id]: '' }));
       await refresh();
     } catch (cause) {
+      if (cause.code === 'INVALID_STATUS') {
+        await refresh();
+      }
       setError(cause.message);
+    } finally {
+      setPendingId('');
     }
   };
 
@@ -2463,7 +2823,7 @@ function AdminRechargesPage() {
       />
       {error && <ErrorToast message={error} onDismiss={() => setError('')} />}
       {loading ? <p className='empty-state' role='status'>Loading recharge requests…</p> : items.length ? (
-        <div className='table-wrap'>
+        <div className='table-wrap admin-compact-table admin-recharges-table'>
           <table>
             <thead>
               <tr><th>User</th><th>Phone Number</th><th>Amount</th><th>Method</th><th>Sender</th><th>Reference</th><th>Status</th><th>Proof</th><th>Actions</th></tr>
@@ -2491,11 +2851,37 @@ function AdminRechargesPage() {
                     ) : 'No proof'}
                   </td>
                   <td>
-                    <div className='button-row compact'>
-                      <button type='button' className='secondary-button' onClick={() => review(item.id, 'review')}>Under review</button>
-                      <button type='button' className='primary-button' onClick={() => review(item.id, 'approve')}>Approve</button>
-                      <button type='button' className='secondary-button' onClick={() => review(item.id, 'reject', 'Rejected by admin')}>Reject</button>
-                    </div>
+                    {['PENDING', 'UNDER_REVIEW', 'APPROVED'].includes(item.status) ? (
+                      <div className='form-stack'>
+                        <label className='admin-recharge-note'>
+                          <span>
+                            {item.status === 'APPROVED' ? 'Reversal reason' : 'Admin comment'}
+                            <small>{item.status === 'APPROVED' ? ' (required; removes credited amount)' : ' (required to reject)'}</small>
+                          </span>
+                          <textarea
+                            aria-label={`Admin comment and rejection reason for ${item.fullName || item.userId}`}
+                            value={notes[item.id] ?? ''}
+                            onChange={(event) => setNotes((current) => ({ ...current, [item.id]: event.target.value }))}
+                            placeholder={item.status === 'APPROVED' ? 'Explain why this approved recharge should be reversed' : 'Write a comment or rejection reason'}
+                            maxLength={1000}
+                            rows={2}
+                          />
+                        </label>
+                        <div className='button-row compact'>
+                          {item.status !== 'APPROVED' && (
+                            <>
+                              <button type='button' className='secondary-button' disabled={pendingId !== ''} onClick={() => review(item.id, 'review')}>Under review</button>
+                              <button type='button' className='primary-button' disabled={pendingId !== ''} onClick={() => review(item.id, 'approve')}>Approve</button>
+                            </>
+                          )}
+                          <button type='button' className='secondary-button' disabled={pendingId !== ''} onClick={() => review(item.id, 'reject')}>
+                            {pendingId === item.id ? 'Rejecting…' : item.status === 'APPROVED' ? 'Reject & reverse' : 'Reject'}
+                          </button>
+                        </div>
+                      </div>
+                    ) : (
+                      <span>{item.adminNote || 'Already resolved'}</span>
+                    )}
                   </td>
                 </tr>
               ))}
@@ -2503,7 +2889,7 @@ function AdminRechargesPage() {
           </table>
         </div>
       ) : <Empty>No recharge requests found.</Empty>}
-      <AdminTablePagination pagination={pagination} page={page} setPage={setPage} loading={loading} />
+      <AdminTablePagination pagination={pagination} page={page} setPage={setPage} loading={loading || pendingId !== ''} />
       {proofPreview && (
         <div className='proof-viewer-backdrop' role='presentation' onClick={(event) => {
           if (event.target === event.currentTarget) setProofPreview(null);
@@ -2651,7 +3037,7 @@ function AdminWithdrawalsPage() {
       {error && <ErrorToast message={error} onDismiss={() => setError('')} />}
       {notice && <SuccessToast message={notice} onDismiss={() => setNotice('')} />}
       {loading ? <p className='empty-state' role='status'>Loading withdrawal requests…</p> : items.length ? (
-        <div className='table-wrap'>
+        <div className='table-wrap admin-compact-table admin-withdrawals-table'>
           <table>
             <thead>
               <tr><th>Customer</th><th>Amount</th><th>Fee / Net</th><th>Full payout details</th><th>Status</th><th>Requested</th><th>Admin note</th><th>Actions</th></tr>
@@ -3025,8 +3411,9 @@ function AdminTablePagination({ pagination, page, setPage, loading, noun = 'requ
 }
 
 function StatusBadge({ status }) {
+  const { t } = useLanguage();
   const normalized = String(status ?? '').toLowerCase().replaceAll('_', '-');
-  return <span className={`status-badge status-${normalized}`}>{String(status ?? 'UNKNOWN').replaceAll('_', ' ')}</span>;
+  return <span className={`status-badge status-${normalized}`}>{t(String(status ?? 'UNKNOWN').replaceAll('_', ' '))}</span>;
 }
 
 function AdminSupportPage({ support, onSave }) {
@@ -3123,7 +3510,7 @@ function AdminWelcomePage({ support, onSave, onUploadImage, onError }) {
         <label className='field'><span>Example section title</span><input name='welcomeExampleTitle' defaultValue={support.welcomeExampleTitle ?? ''} maxLength='120' required /></label>
         <div className='profile-form-grid'>
           <label className='field'><span>Example product price (ETB)</span><input type='number' name='welcomeExamplePrice' min='0' max='100000000' step='0.01' defaultValue={support.welcomeExamplePrice ?? 300} required /></label>
-          <label className='field'><span>Example daily earnings (ETB)</span><input type='number' name='welcomeExampleDailyEarnings' min='0' max='100000000' step='0.01' defaultValue={support.welcomeExampleDailyEarnings ?? 72} required /></label>
+          <label className='field'><span>Example daily earnings (ETB)</span><input type='number' name='welcomeExampleDailyEarnings' min='0' max='100000000' step='0.01' defaultValue={support.welcomeExampleDailyEarnings ?? 15} required /></label>
         </div>
         <label className='field'><span>Example disclaimer</span><textarea name='welcomeDisclaimer' rows='3' defaultValue={support.welcomeDisclaimer ?? ''} maxLength='1000' required /></label>
         <label className='field'><span>Illustration image URL (optional)</span><input type='text' name='welcomeImageUrl' value={imageUrl} onChange={(event) => setImageUrl(event.target.value)} maxLength='500' placeholder='https://example.com/welcome-image.jpg' />
@@ -3243,14 +3630,22 @@ function AdminAccessDenied() {
       <section className='auth-intro' style={{ background: 'linear-gradient(145deg, #1a2421 0%, #1c1815 100%)' }}>
         <div className='brand auth-brand'>
           <span className='brand-mark' style={{ background: '#b91c1c' }}>!</span>
+<<<<<<< HEAD
           <span>MKM Admin<span className='brand-caption'>SECURITY BOUNDARY</span></span>
+=======
+          <span>Online Trade Admin<span className='brand-caption'>SECURITY BOUNDARY</span></span>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
         </div>
         <div className='intro-copy'>
           <p className='eyebrow' style={{ color: '#f87171' }}>ACCESS RESTRICTED</p>
           <h1>Access Denied</h1>
           <p>This administrative portal is strictly reserved for authorized platform administrators.</p>
         </div>
+<<<<<<< HEAD
         <div className='intro-foot'>RESTRICTED ACCESS <span>•</span> MKM {new Date().getFullYear()}</div>
+=======
+        <div className='intro-foot'>RESTRICTED ACCESS <span>•</span> Online Trade {new Date().getFullYear()}</div>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
       </section>
       <section className='auth-side'>
         <div className='auth-form-wrap'>
@@ -3273,6 +3668,7 @@ function AdminAccessDenied() {
 }
 
 function AdminLoginScreen({ auth, setAuth, onSubmit, busy, error, onDismissError }) {
+<<<<<<< HEAD
   return (
     <main className='auth-page'>
       <section className='auth-intro'>
@@ -3621,22 +4017,25 @@ function AuthScreen({ auth, setAuth, mode, onSubmit, onSwitchMode, busy, error, 
       .catch(() => undefined);
   }, [appDownloadUrl]);
 
+=======
+>>>>>>> d1aaf18 (Update OnlineTrade project)
   return (
     <main className='auth-page'>
       <section className='auth-intro'>
-        <Link className='brand auth-brand' to='/'>
-          <span className='brand-mark'>M</span>
-          <span>MKM<span className='brand-caption'>MEMBER PORTAL</span></span>
+        <Link className='brand auth-brand' to='/admin/login'>
+          <span className='brand-mark'>OT</span>
+          <span>Online Trade Admin<span className='brand-caption'>ADMIN PANEL</span></span>
         </Link>
         <div className='intro-copy'>
-          <p className='eyebrow'>A CLEARER WAY FORWARD</p>
-          <h1>Build your next<br />step with MKM.</h1>
-          <p>Manage your wallet, explore products and keep your team in view.</p>
+          <p className='eyebrow'>PRIVATE ACCESS</p>
+          <h1>Admin portal</h1>
+          <p>Secure administrative controls for customers, payouts, products and support.</p>
         </div>
-        <div className='intro-foot'>SECURE MEMBER ACCESS <span>•</span> MKM {new Date().getFullYear()}</div>
+        <div className='intro-foot'>SECURE ADMINISTRATOR ACCESS <span>•</span> Online Trade {new Date().getFullYear()}</div>
       </section>
       <section className='auth-side'>
         <div className='auth-form-wrap'>
+<<<<<<< HEAD
           <p className='eyebrow'>{registering ? 'CREATE YOUR ACCOUNT' : 'WELCOME BACK'}</p>
           <h2>{registering ? 'Join MKM' : 'Sign in'}</h2>
           {error && <ErrorToast message={error} onDismiss={onDismissError} />}
@@ -3645,24 +4044,24 @@ function AuthScreen({ auth, setAuth, mode, onSubmit, onSwitchMode, busy, error, 
               <span style={{ fontSize: '13px', color: '#173d31', fontWeight: 500 }}>Administrator account detected</span>
               <Link to='/admin/login' style={{ fontSize: '12px', fontWeight: 700, color: '#173d31', textDecoration: 'underline' }}>
                 Admin Portal ↗
+=======
+          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', padding: '5px 12px', borderRadius: '999px', background: 'rgba(13, 79, 79, 0.08)', color: '#0d4f4f', fontSize: '11px', fontWeight: 600, letterSpacing: '0.05em', textTransform: 'uppercase', marginBottom: '14px' }}>
+            <ShieldCheck size={14} />
+            <span>Authorized Administrators Only</span>
+          </div>
+          <h2>Administrator login</h2>
+          <p className='form-subtitle'>Sign in with your administrator phone number and password.</p>
+          {error && <ErrorToast message={error} onDismiss={onDismissError} />}
+          {error && (error.includes('/login') || error.toLowerCase().includes('customer')) && (
+            <div style={{ margin: '14px 0', padding: '12px 14px', borderRadius: '8px', background: 'rgba(239, 68, 68, 0.08)', border: '1px solid rgba(239, 68, 68, 0.25)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+              <span style={{ fontSize: '13px', color: '#991b1b', fontWeight: 500 }}>Customer account detected</span>
+              <Link to='/login' style={{ fontSize: '12px', fontWeight: 700, color: '#991b1b', textDecoration: 'underline' }}>
+                Customer Login ↗
+>>>>>>> d1aaf18 (Update OnlineTrade project)
               </Link>
             </div>
           )}
           <form onSubmit={onSubmit} className='form-stack'>
-            {registering && (
-              <label className='field'>
-                <span>Full Name *</span>
-                <input
-                  type='text'
-                  value={auth.fullName}
-                  onChange={(event) => setAuth({ ...auth, fullName: event.target.value })}
-                  placeholder='e.g. Abebe Bikila'
-                  autoComplete='name'
-                  required
-                />
-              </label>
-            )}
-
             <label className='field'>
               <span>Phone number *</span>
               <div className='phone-input-group'>
@@ -3677,16 +4076,401 @@ function AuthScreen({ auth, setAuth, mode, onSubmit, onSwitchMode, busy, error, 
                   required
                 />
               </div>
-              <small>Enter your 9-digit local number (e.g. 912345678 or 712345678).</small>
+              <small>Enter your 9-digit administrator phone number.</small>
             </label>
-
             <label className='field'>
-              <span>Login Password *</span>
+              <span>Password *</span>
               <input
                 type='password'
                 value={auth.password}
                 onChange={(event) => setAuth({ ...auth, password: event.target.value })}
-                placeholder='Minimum 6 characters'
+                placeholder='Enter your password'
+                autoComplete='current-password'
+                required
+              />
+            </label>
+            <button className='primary-button' disabled={busy}>{busy ? 'Please wait…' : 'Sign in to Admin'}<span>↗</span></button>
+          </form>
+          <div style={{ marginTop: '1.5rem', textAlign: 'center' }}>
+            <Link to='/login' style={{ color: 'var(--color-text-muted, #888)', fontSize: '0.875rem', textDecoration: 'none' }}>
+              ← Return to customer login
+            </Link>
+          </div>
+        </div>
+      </section>
+    </main>
+  );
+}
+
+
+function ProtectedCustomerApp({ user, dashboard, support, products, team, members, referralInfo, referralsLoading, referralsError, setReferralsError, methods, accounts, recharges, withdrawals, settings, busy, notice, customerSuccessAlert, onDismissCustomerAlert, error, setError, setNotice, onCopyReferral, onPurchase, onSubmitRecharge, onSubmitWithdrawal, onCustomerSuccess, onSaveAccount, onSignOut, onRefreshDashboard }) {
+  const location = useLocation();
+  const { t } = useLanguage();
+  const [navOpen, setNavOpen] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [unreadNotificationCount, setUnreadNotificationCount] = useState(0);
+  const [currentVipInfo, setCurrentVipInfo] = useState({ loading: true, purchase: null });
+  const latestNotificationId = useRef(null);
+  const onCustomerSuccessRef = useRef(onCustomerSuccess);
+  onCustomerSuccessRef.current = onCustomerSuccess;
+  const currentPath = location.pathname || '/dashboard';
+  useEffect(() => {
+    let active = true;
+    const refreshUnreadCount = async () => {
+      try {
+        const [unread, latest] = await Promise.all([
+          api('/notifications/unread-count'),
+          api('/notifications?page=1&limit=1'),
+        ]);
+        if (!active) return;
+        setUnreadNotificationCount(unread.unreadCount);
+        const latestItem = latest.items[0];
+        if (latestNotificationId.current === null) {
+          latestNotificationId.current = latestItem?.id ?? '';
+        } else if (latestItem?.id && latestItem.id !== latestNotificationId.current) {
+          latestNotificationId.current = latestItem.id;
+          if (!latestItem.isRead) {
+            onCustomerSuccessRef.current(`${latestItem.title}: ${latestItem.message}`);
+          }
+        }
+      } catch (cause) {
+        if (active) setError(cause.message);
+      }
+    };
+    const refreshOnFocus = () => {
+      if (document.visibilityState === 'visible') refreshUnreadCount();
+    };
+
+    refreshUnreadCount();
+    const interval = window.setInterval(refreshUnreadCount, 15000);
+    window.addEventListener('focus', refreshOnFocus);
+    document.addEventListener('visibilitychange', refreshOnFocus);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+      window.removeEventListener('focus', refreshOnFocus);
+      document.removeEventListener('visibilitychange', refreshOnFocus);
+    };
+  }, [setError]);
+
+  useEffect(() => {
+    setNavOpen(false);
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+  useEffect(() => {
+    if (!location.hash) return;
+    document.getElementById(decodeURIComponent(location.hash.slice(1)))?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }, [location.pathname, location.hash]);
+  const currentTitle = (() => {
+    if (currentPath.startsWith('/products/')) return t('Product details');
+    if (currentPath === '/welcome') return t('Welcome to Online Trade');
+    if (currentPath === '/my') return t('MY');
+    if (currentPath === '/dashboard') return t('Overview');
+    if (currentPath === '/products') return t('Products');
+    if (currentPath === '/tasks') return t('Daily Tasks');
+    if (currentPath === '/purchases') return t('My Investments');
+    if (currentPath === '/recharge') return t('Recharge');
+    if (currentPath === '/recharge/bank') return t('Choose payment method');
+    if (currentPath === '/recharge/payment') return t('Payment details');
+    if (currentPath === '/recharge/history') return t('Recharge history');
+    if (currentPath === '/withdrawal-account') return t('Personal Information');
+    if (currentPath === '/withdraw') return t('Withdraw');
+    if (currentPath === '/withdraw/history') return t('Withdraw');
+    if (currentPath === '/referrals') return t('Referrals');
+    if (currentPath === '/spin') return '';
+    if (currentPath === '/rewards') return t('Rewards');
+    if (currentPath === '/game') return t('Multiplier game');
+    if (currentPath === '/transactions') return t('Transactions');
+    if (currentPath === '/notifications') return t('Notifications');
+    if (currentPath === '/profile') return t('Personal Information');
+    if (currentPath === '/support') return t('Support');
+    if (currentPath === '/support/chat') return t('Online chat');
+    if (currentPath === '/download') return t('Download App');
+    return t('Member portal');
+  })();
+
+  const renderPage = () => {
+    if (currentPath === '/welcome') {
+      return <WelcomePromotionPage registrationBonus={settings?.registrationBonus ?? 70} support={support} />;
+    }
+    if (currentPath.startsWith('/products/')) {
+      const productId = currentPath.split('/').filter(Boolean).at(-1);
+      const item = products.find((product) => product.id === productId) ?? null;
+      return <ProductDetailPage product={item} onPurchase={onPurchase} busy={busy} />;
+    }
+    switch (currentPath) {
+      case '/dashboard':
+      case '/':
+        return <Overview data={dashboard} products={products} busy={busy} onPurchase={onPurchase} onCopy={onCopyReferral} support={support} onRefreshDashboard={onRefreshDashboard} />;
+      case '/my':
+        return <MyPage support={support} dashboard={dashboard} onCurrentVipChange={setCurrentVipInfo} onSignOut={onSignOut} />;
+      case '/products':
+        return <Products items={products} busy={busy} onPurchase={onPurchase} />;
+      case '/tasks':
+        return <TasksPage onRefreshDashboard={onRefreshDashboard} />;
+      case '/purchases':
+        return <PurchasesPage />;
+      case '/recharge':
+        return <Recharge methods={methods} history={recharges} busy={busy} onSubmit={onSubmitRecharge} settings={settings} />;
+      case '/recharge/bank':
+        return <RechargeBankSelectionPage methods={methods} />;
+      case '/recharge/payment':
+        return <RechargePaymentPage methods={methods} settings={settings} onCustomerSuccess={onCustomerSuccess} />;
+      case '/recharge/history':
+        return <RechargeHistoryPage />;
+      case '/withdrawal-account':
+        return <Navigate to='/profile' replace />;
+      case '/withdraw':
+        return <Withdraw accounts={accounts} history={withdrawals} balance={dashboard?.wallet?.availableBalance} settings={settings} busy={busy} onSubmit={onSubmitWithdrawal} />;
+      case '/withdraw/history':
+        return <Navigate to='/withdraw' replace />;
+      case '/referrals':
+        return <Team summary={team} members={members} loading={referralsLoading} error={referralsError} onDismissError={() => setReferralsError('')} code={dashboard?.referralCode ?? referralInfo?.referralCode} referralLink={referralInfo?.referralLink ?? (dashboard?.referralCode ? `${window.location.origin}/register?ref=${dashboard.referralCode}` : '')} rates={referralInfo?.rates ?? { A: 10, B: 3, C: 2 }} onCopyCode={onCopyReferral} onCopyLink={() => {
+          const value = referralInfo?.referralLink ?? (dashboard?.referralCode ? `${window.location.origin}/register?ref=${dashboard.referralCode}` : '');
+          navigator.clipboard?.writeText(value).catch(() => undefined);
+          setNotice('Referral link copied.');
+        }} onShare={async () => {
+          const value = referralInfo?.referralLink ?? (dashboard?.referralCode ? `${window.location.origin}/register?ref=${dashboard.referralCode}` : '');
+          if (navigator.share && value) {
+            try {
+              await navigator.share({ title: 'Online Trade Referral', text: 'Join me on Online Trade and earn together.', url: value });
+              return;
+            } catch {
+              // fall through to copied link fallback
+            }
+          }
+          if (value) {
+            await navigator.clipboard?.writeText(value).catch(() => undefined);
+          }
+          setNotice('Referral link is ready to share.');
+        }} />;
+      case '/spin':
+        return <CustomerPromotions onAwarded={onRefreshDashboard} display='full' />;
+      case '/rewards':
+        return <RewardsPage onCustomerSuccess={onCustomerSuccess} />;
+      case '/game':
+        return <MultiplierGamePage onAwarded={onRefreshDashboard} />;
+      case '/transactions':
+        return <TransactionsPage />;
+      case '/notifications':
+        return <NotificationsPage onMarkRead={() => setUnreadNotificationCount((count) => Math.max(0, count - 1))} />;
+      case '/profile':
+        return <ProfilePage methods={methods} support={support} busy={busy} onSaveAccount={onSaveAccount} />;
+      case '/support':
+        return <SupportPage />;
+      case '/support/chat':
+        return <SupportChatPage support={support} />;
+      case '/download':
+        return <CustomerDownloadPage support={support} />;
+      default:
+        return <Navigate to='/dashboard' replace />;
+    }
+  };
+
+  return (
+    <div className='workspace customer-workspace'>
+      {user?.role === 'CUSTOMER' && customerSuccessAlert && (
+        <div className='customer-success-toast' role='status' aria-live='polite'>
+          <CheckCircle2 size={22} aria-hidden='true' />
+          <span>{customerSuccessAlert}</span>
+          <button type='button' onClick={onDismissCustomerAlert} aria-label='Dismiss success message'><X size={18} /></button>
+        </div>
+      )}
+      <aside className='sidebar customer-sidebar'>
+        <div className='sidebar-heading'>
+          <NavLink to='/dashboard' className='brand' end>
+            <span className='brand-mark'>OT</span>
+            <span>Online Trade</span>
+          </NavLink>
+          <button className='workspace-menu-toggle' type='button' aria-expanded={navOpen} aria-controls='customer-navigation' aria-label={navOpen ? 'Close member navigation' : 'Open member navigation'} onClick={() => setNavOpen((open) => !open)}>
+            {navOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
+        <nav id='customer-navigation' className={navOpen ? 'is-open' : ''} aria-label='Member navigation'>
+          <NavLink to={myPageNavItem.to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <MyPageIcon size={17} strokeWidth={1.8} />
+            {t(myPageNavItem.label)}
+          </NavLink>
+          <div className='nav-section'>
+            <p className='nav-section-label'>{t('WORKSPACE')}</p>
+            {workspaceNavItems.map(({ to, label, icon: Icon }) => (
+              <NavLink key={to} to={to} className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end={to === '/dashboard'}>
+                <Icon size={17} strokeWidth={1.8} />
+                {t(label)}
+              </NavLink>
+            ))}
+          </div>
+        </nav>
+      </aside>
+      <main className='main-area'>
+        <header className={`topbar ${['/transactions', '/spin', '/game'].includes(currentPath) ? 'transactions-hidden-shell' : ''}`}>
+          <div>
+            {currentPath === '/my' ? (
+              <>
+                <p className='eyebrow'>{t('Current VIP')}</p>
+                <div className='customer-vip-heading'>
+                  <h1>{currentVipInfo.loading ? t('Loading…') : currentVipInfo.purchase?.name ?? 'VIP 0'}</h1>
+                  <span>{currentVipInfo.loading ? ' ' : currentVipInfo.purchase ? t('ACTIVE') : t('NO ACTIVE VIP')}</span>
+                </div>
+              </>
+            ) : currentPath === '/spin' ? null : currentPath === '/dashboard' || currentPath === '/' ? (
+              <div className='dashboard-balance-heading'>
+                <p className='eyebrow'>{t('Available balance')}</p>
+                <h1>{money(dashboard?.wallet?.availableBalance)}</h1>
+                <small>{t('ACCOUNT SUMMARY')}</small>
+              </div>
+            ) : (
+              <>
+                <p className='eyebrow'>{t('MEMBER ACCOUNT')}</p>
+                <h1>{currentTitle}</h1>
+              </>
+            )}
+          </div>
+          <div className='topbar-right'>
+            <LanguageSwitcher />
+            <NavLink
+              to='/notifications'
+              className={({ isActive }) => `notification-icon-link ${isActive ? 'active' : ''}`}
+              aria-label='Notifications'
+              title='Notifications'
+            >
+              <Bell size={20} strokeWidth={1.9} aria-hidden='true' />
+              {unreadNotificationCount > 0 && (
+                <span className='notification-unread-badge' aria-label={`${unreadNotificationCount} unread notifications`}>
+                  {unreadNotificationCount > 99 ? '99+' : unreadNotificationCount}
+                </span>
+              )}
+            </NavLink>
+            <span className='status-dot' /> {t('Account active')}
+          </div>
+        </header>
+        <div className={`content ${currentPath === '/transactions' ? 'transactions-page-content' : ''} ${['/spin', '/game'].includes(currentPath) ? 'immersive-page-content' : ''}`}>
+          {error && <ErrorToast message={error} onDismiss={() => setError('')} />}
+          {notice && <SuccessToast message={notice} onDismiss={() => setNotice('')} />}
+          {renderPage()}
+        </div>
+      </main>
+      <nav className={`customer-mobile-footer ${['/transactions', '/spin', '/game'].includes(currentPath) ? 'transactions-hidden-shell' : ''}`} aria-label='Mobile member navigation'>
+        {mobileMenuOpen && (
+          <div className='customer-mobile-menu'>
+            <div className='customer-mobile-menu-heading'>
+              <strong>{t('All member pages')}</strong>
+              <LanguageSwitcher />
+              <button type='button' className='customer-mobile-menu-close' onClick={() => setMobileMenuOpen(false)} aria-label='Close all pages menu'><X size={18} /></button>
+            </div>
+            <NavLink to={myPageNavItem.to} className={({ isActive }) => `customer-mobile-menu-link my-page-menu-link ${isActive ? 'active' : ''}`} onClick={() => setMobileMenuOpen(false)}>
+              <MyPageIcon size={18} strokeWidth={1.8} />
+              <span>{t(myPageNavItem.label)}</span>
+            </NavLink>
+            <div className='customer-mobile-menu-section'>
+              <p className='customer-mobile-menu-label'>{t('WORKSPACE')}</p>
+              <div className='customer-mobile-menu-grid'>
+                {workspaceNavItems.map(({ to, label, icon: Icon }) => (
+                  <NavLink key={to} to={to} className={({ isActive }) => `customer-mobile-menu-link ${isActive ? 'active' : ''}`} end={to === '/dashboard'}>
+                    <Icon size={18} strokeWidth={1.8} />
+                    <span>{t(label)}</span>
+                  </NavLink>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+        <div className='customer-mobile-dock'>
+          <NavLink to='/dashboard' className={({ isActive }) => `customer-mobile-dock-link ${isActive ? 'active' : ''}`} end>
+            <LayoutDashboard size={19} strokeWidth={1.9} />
+            <span>{t('Home')}</span>
+          </NavLink>
+          <NavLink to='/purchases' className={({ isActive }) => `customer-mobile-dock-link ${isActive ? 'active' : ''}`}>
+            <Package size={19} strokeWidth={1.9} />
+            <span>{t('Assets')}</span>
+          </NavLink>
+          <NavLink to='/referrals' className={({ isActive }) => `customer-mobile-dock-link ${isActive ? 'active' : ''}`}>
+            <Users size={19} strokeWidth={1.9} />
+            <span>{t('Team')}</span>
+          </NavLink>
+          <NavLink to='/my' className={({ isActive }) => `customer-mobile-dock-link ${isActive ? 'active' : ''}`}>
+            <MyPageIcon size={19} strokeWidth={1.9} />
+            <span>{t('Me')}</span>
+          </NavLink>
+          <NavLink to='/game' className={({ isActive }) => `customer-mobile-dock-link ${isActive ? 'active' : ''}`}>
+            <CircleDollarSign size={19} strokeWidth={1.9} />
+            <span>{t('Game')}</span>
+          </NavLink>
+        </div>
+      </nav>
+    </div>
+  );
+}
+
+function AuthScreen({ auth, setAuth, mode, onSubmit, onSwitchMode, busy, error, onDismissError, support }) {
+  const registering = mode === 'register';
+  const { t } = useLanguage();
+
+  return (
+    <main className='auth-page auth-page-centered'>
+      <PromotionGallery banners={support?.promotionBanners} presentation='carousel' />
+      <LanguageSwitcher className='auth-language-switcher' />
+      <section className='auth-side auth-side-centered'>
+        <div className='auth-form-wrap auth-form-card'>
+          <Link className='brand auth-brand' to='/'>
+            <span className='brand-mark'>OT</span>
+            <span>Online Trade<span className='brand-caption'>{t('WELCOME TO ONLINE TRADE')}</span></span>
+          </Link>
+          {registering ? (
+            <div className='auth-card-intro'>
+              <p className='eyebrow'>{t('START YOUR MEMBER JOURNEY')}</p>
+              <h1>{t('Create your account')}</h1>
+              <p>{t('Manage your wallet, follow daily rewards, and keep your referral team in view.')}</p>
+            </div>
+          ) : null}
+          {error && <ErrorToast message={error} onDismiss={onDismissError} />}
+          {!registering && error && (error.includes('/admin/login') || error.toLowerCase().includes('administrator')) && (
+            <div style={{ margin: '14px 0', padding: '12px 14px', borderRadius: '8px', background: 'rgba(13, 79, 79, 0.08)', border: '1px solid rgba(13, 79, 79, 0.25)', display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+              <span style={{ fontSize: '13px', color: '#0d4f4f', fontWeight: 500 }}>{t('Administrator account detected')}</span>
+              <Link to='/admin/login' style={{ fontSize: '12px', fontWeight: 700, color: '#0d4f4f', textDecoration: 'underline' }}>
+                {t('Admin Portal ↗')}
+              </Link>
+            </div>
+          )}
+          <form onSubmit={onSubmit} className='form-stack'>
+            {registering && (
+              <label className='field'>
+                <span>{t('Full Name *')}</span>
+                <input
+                  type='text'
+                  value={auth.fullName}
+                  onChange={(event) => setAuth({ ...auth, fullName: event.target.value })}
+                  placeholder={t('e.g. Abebe Bikila')}
+                  autoComplete='name'
+                  required
+                />
+              </label>
+            )}
+
+            <label className='field'>
+              <span>{t('Phone number *')}</span>
+              <div className='phone-input-group'>
+                <span className='phone-prefix-pill'>+251</span>
+                <input
+                  type='tel'
+                  inputMode='numeric'
+                  placeholder='912345678'
+                  value={auth.phoneNumber}
+                  onChange={(event) => setAuth({ ...auth, phoneNumber: event.target.value.replace(/\D/g, '').slice(0, 9) })}
+                  autoComplete='tel'
+                  required
+                />
+              </div>
+              <small>{t('Enter your 9-digit local number (e.g. 912345678 or 712345678).')}</small>
+            </label>
+
+            <label className='field'>
+              <span>{t('Login Password *')}</span>
+              <input
+                type='password'
+                value={auth.password}
+                onChange={(event) => setAuth({ ...auth, password: event.target.value })}
+                placeholder={t('Minimum 6 characters')}
                 autoComplete={registering ? 'new-password' : 'current-password'}
                 minLength={6}
                 required
@@ -3695,33 +4479,33 @@ function AuthScreen({ auth, setAuth, mode, onSubmit, onSwitchMode, busy, error, 
 
             {!registering && (
               <div className='auth-forgot-row'>
-                <Link to='/forgot-password'>Forgot Password?</Link>
+                <Link to='/forgot-password'>{t('Forgot Password?')}</Link>
               </div>
             )}
 
             {registering && (
               <>
                 <label className='field'>
-                  <span>Confirm Login Password *</span>
+                  <span>{t('Confirm Login Password *')}</span>
                   <input
                     type='password'
                     value={auth.confirmPassword}
                     onChange={(event) => setAuth({ ...auth, confirmPassword: event.target.value })}
-                    placeholder='Repeat login password'
+                    placeholder={t('Repeat login password')}
                     autoComplete='new-password'
                     minLength={6}
                     required
                   />
                 </label>
                 <label className='field'>
-                  <span>Referral Code (Optional)</span>
+                  <span>{t('Referral Code (Optional)')}</span>
                   <input
                     type='text'
                     value={auth.referralCode}
                     onChange={(event) => setAuth({ ...auth, referralCode: event.target.value.toUpperCase() })}
-                    placeholder='e.g. MKM-ABC123'
+                    placeholder={t('e.g. OT-ABC123')}
                   />
-                  <small>Leave blank if you were not invited by a sponsor.</small>
+                  <small>{t('Leave blank if you were not invited by a sponsor.')}</small>
                 </label>
                 <label className='terms'>
                   <input
@@ -3730,19 +4514,19 @@ function AuthScreen({ auth, setAuth, mode, onSubmit, onSwitchMode, busy, error, 
                     onChange={(event) => setAuth({ ...auth, acceptedTerms: event.target.checked })}
                     required
                   />
-                  <span>I accept the <Link to='/terms' target='_blank'>Terms of Service</Link> and <Link to='/privacy' target='_blank'>Privacy Policy</Link>.</span>
+                  <span>{t('I accept the')}<Link to='/terms' target='_blank'>{t('Terms of Service')}</Link>{t(' and ')}<Link to='/privacy' target='_blank'>{t('Privacy Policy')}</Link>{t('.')}</span>
                 </label>
               </>
             )}
 
             <button className='primary-button large-btn' disabled={busy}>
-              {busy ? 'Please wait…' : registering ? 'Create Account (Get 70 ETB Bonus)' : 'Sign In'} <span>↗</span>
+              {busy ? t('Please wait…') : registering ? t('Create Account (Get 100 ETB Bonus)') : t('Sign In')} <span>↗</span>
             </button>
           </form>
           <p className='auth-switch'>
-            {registering ? 'Already a member?' : "Don't have an account?"}{' '}
+            {registering ? t('Already a member?') : t("Don't have an account?")}{' '}
             <button type='button' onClick={onSwitchMode}>
-              {registering ? 'Sign in' : 'Register now'}
+              {registering ? t('Sign in') : t('Register now')}
             </button>
           </p>
 
@@ -3773,35 +4557,275 @@ function AuthScreen({ auth, setAuth, mode, onSubmit, onSwitchMode, busy, error, 
 
 function WelcomePromotionPage({ registrationBonus, support }) {
   const navigate = useNavigate();
+  const groupUrl = support?.officialGroupUrl || support?.whatsappUrl;
+
+  const handleJoinGroup = () => {
+    if (groupUrl) {
+      window.open(groupUrl, '_blank', 'noopener,noreferrer');
+    }
+    navigate('/dashboard');
+  };
+
+  const bonusAmount = Number(registrationBonus || 100);
+  const minDeposit = Number(support?.welcomeExamplePrice ?? 300);
+
   return (
-    <section className='welcome-promotion'>
-      <div className='welcome-promotion-art'>
-        <img src={assetUrl(support?.welcomeImageUrl) || welcomePromotionImage} alt={support?.welcomeImageAlt || 'MKM welcome illustration with a rising plant and gift box'} />
-      </div>
-      <div className='welcome-promotion-copy'>
-        <p className='eyebrow'>{support?.welcomeEyebrow || 'YOUR MEMBER JOURNEY STARTS HERE'}</p>
-        <h2>{support?.welcomeTitle || 'Welcome to MKM'}</h2>
-        <p className='welcome-promotion-intro'>{support?.welcomeIntro || 'We’re glad you’re here. Explore your account, products, and member benefits from one place.'}</p>
-        <div className='welcome-promotion-bonus'>
-          <span>{support?.welcomeBonusLabel || 'Welcome bonus'}</span>
-          <strong>{money(registrationBonus)}</strong>
-        </div>
-        <div className='welcome-promotion-example'>
-          <p className='eyebrow'>{support?.welcomeExampleTitle || 'PRODUCT EXAMPLE'}</p>
-          <div className='welcome-example-values'>
-            <div><span>Example product price</span><strong>{money(support?.welcomeExamplePrice ?? 300)}</strong></div>
-            <div><span>Example daily earnings</span><strong>{money(support?.welcomeExampleDailyEarnings ?? 72)}</strong></div>
+    <div className='welcome-modal-overlay' onClick={() => navigate('/dashboard')}>
+      <div className='welcome-modal-dialog' onClick={(e) => e.stopPropagation()}>
+        <button
+          className='welcome-modal-close'
+          type='button'
+          onClick={() => navigate('/dashboard')}
+          aria-label='Close welcome dialog'
+        >
+          <X size={19} />
+        </button>
+
+        <h2 className='welcome-modal-title'>{support?.siteName || 'Online Trade'}</h2>
+        <p className='welcome-modal-intro'>
+          {support?.welcomeIntro || 'Online Trade is a member platform that connects you to premium earning opportunities with transparent tracking, automated daily rewards, and steady returns.'}
+        </p>
+
+        <div className='welcome-modal-pills'>
+          <div className='welcome-modal-pill'>
+            <span className='pill-label'>Registration Bonus:</span>
+            <strong className='pill-value'>ETB{bonusAmount}</strong>
           </div>
-          <small>{support?.welcomeDisclaimer || 'Illustrative example only. Actual product terms and earnings depend on the product details shown before purchase.'}</small>
+          <div className='welcome-modal-pill'>
+            <span className='pill-label'>Minimum Deposit:</span>
+            <strong className='pill-value'>ETB{minDeposit}</strong>
+          </div>
+          <div className='welcome-modal-pill'>
+            <span className='pill-label'>Minimum Withdrawal:</span>
+            <strong className='pill-value'>ETB150</strong>
+          </div>
         </div>
-        <button className='primary-button welcome-home-button' type='button' onClick={() => navigate('/dashboard')}>
-          {support?.welcomeHomeButtonLabel || 'Go to Home'} <span>↗</span>
+
+        <button
+          className='welcome-modal-cta'
+          type='button'
+          onClick={handleJoinGroup}
+        >
+          Join Group
         </button>
       </div>
+    </div>
+  );
+}
+
+function PromotionBannerCarousel({ banners = [] }) {
+  const defaultBanners = [
+    { id: 1, imageUrl: '/banners/banner1.svg', title: 'Invest in Fresh Fruits', link: '/products' },
+    { id: 2, imageUrl: '/banners/banner2.svg', title: 'Get Free ETB 100 Bonus', link: '/recharge' },
+    { id: 3, imageUrl: '/banners/banner3.svg', title: 'Instant Bank Deposits', link: '/recharge' },
+    { id: 4, imageUrl: '/banners/banner4.svg', title: 'Daily Harvest Tasks', link: '/purchases' },
+    { id: 5, imageUrl: '/banners/banner5.svg', title: 'Invite Friends & Earn', link: '/referrals' },
+  ];
+  const items = Array.isArray(banners) && banners.length ? banners : defaultBanners;
+  const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPaused, setIsPaused] = useState(false);
+
+  useEffect(() => {
+    if (isPaused || items.length <= 1) return;
+    const interval = window.setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % items.length);
+    }, 4000);
+    return () => window.clearInterval(interval);
+  }, [isPaused, items.length]);
+
+  const prevSlide = () => setCurrentIndex((prev) => (prev - 1 + items.length) % items.length);
+  const nextSlide = () => setCurrentIndex((prev) => (prev + 1) % items.length);
+
+  return (
+    <div
+      className='promotion-carousel-wrapper'
+      onMouseEnter={() => setIsPaused(true)}
+      onMouseLeave={() => setIsPaused(false)}
+    >
+      <div className='promotion-carousel-viewport'>
+        <div
+          className='promotion-carousel-track'
+          style={{ transform: `translateX(-${currentIndex * 100}%)` }}
+        >
+          {items.map((item, idx) => (
+            <div className='promotion-carousel-slide' key={item.id ?? idx}>
+              <Link to={item.link || '/products'} className='promotion-carousel-card'>
+                <img
+                  src={item.imageUrl}
+                  alt={item.title || `Promotion ${idx + 1}`}
+                  className='promotion-carousel-img'
+                />
+              </Link>
+            </div>
+          ))}
+        </div>
+
+        {items.length > 1 && (
+          <>
+            <button
+              type='button'
+              className='carousel-arrow carousel-arrow-prev'
+              onClick={prevSlide}
+              aria-label='Previous promotion'
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <button
+              type='button'
+              className='carousel-arrow carousel-arrow-next'
+              onClick={nextSlide}
+              aria-label='Next promotion'
+            >
+              <ChevronRight size={20} />
+            </button>
+          </>
+        )}
+      </div>
+
+      {items.length > 1 && (
+        <div className='carousel-dots-indicator'>
+          {items.map((_, idx) => (
+            <button
+              key={idx}
+              type='button'
+              className={`carousel-dot ${idx === currentIndex ? 'active' : ''}`}
+              onClick={() => setCurrentIndex(idx)}
+              aria-label={`Go to slide ${idx + 1}`}
+            />
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
+function AdminPromotionBannersPage({ support, onRefresh }) {
+  const [banners, setBanners] = useState(support?.promotionBanners ?? []);
+  const [saving, setSaving] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    if (support?.promotionBanners?.length) {
+      setBanners(support.promotionBanners);
+    } else {
+      api('/admin/settings/banners')
+        .then((res) => {
+          if (res?.items?.length) setBanners(res.items);
+        })
+        .catch(() => {});
+    }
+  }, [support]);
+
+  const updateBanner = (index, field, value) => {
+    setBanners((prev) => {
+      const copy = [...prev];
+      copy[index] = { ...copy[index], [field]: value };
+      return copy;
+    });
+  };
+
+  const handleSave = async (e) => {
+    e.preventDefault();
+    setSaving(true);
+    setMessage('');
+    setError('');
+    try {
+      await api('/admin/settings/banners', {
+        method: 'PUT',
+        ...jsonBody({ items: banners }),
+      });
+      setMessage('All 5 promotional banners updated successfully!');
+      if (onRefresh) onRefresh();
+    } catch (err) {
+      setError(err.message || 'Failed to update banners.');
+    } finally {
+      setSaving(false);
+    }
+  };
+
+  return (
+    <section className='surface form-surface form-stack'>
+      <div className='section-lead'>
+        <div>
+          <p className='eyebrow'>MARKETING &amp; PROMOTION</p>
+          <h2>Configure Promotion Banners</h2>
+          <p className='form-subtitle'>These 5 banners automatically rotate on the member home screen.</p>
+        </div>
+      </div>
+
+      {message && <div className='notice-banner success-notice'>{message}</div>}
+      {error && <div className='error-banner'>{error}</div>}
+
+      <form onSubmit={handleSave} className='form-stack'>
+        <div className='admin-banners-grid'>
+          {banners.slice(0, 5).map((banner, idx) => (
+            <div className='admin-banner-card' key={banner.id || idx}>
+              <div className='admin-banner-preview'>
+                <img src={banner.imageUrl} alt={banner.title} onError={(e) => { e.target.src = '/banners/banner1.svg'; }} />
+                <span className='admin-banner-num'>Banner {idx + 1}</span>
+              </div>
+              <div className='admin-banner-fields'>
+                <label className='field'>
+                  <span>Image URL (or SVG path)</span>
+                  <input
+                    type='text'
+                    value={banner.imageUrl || ''}
+                    onChange={(e) => updateBanner(idx, 'imageUrl', e.target.value)}
+                    required
+                  />
+                </label>
+                <div className='profile-form-grid'>
+                  <label className='field'>
+                    <span>Title</span>
+                    <input
+                      type='text'
+                      value={banner.title || ''}
+                      onChange={(e) => updateBanner(idx, 'title', e.target.value)}
+                      required
+                    />
+                  </label>
+                  <label className='field'>
+                    <span>Badge Tag</span>
+                    <input
+                      type='text'
+                      value={banner.badge || ''}
+                      onChange={(e) => updateBanner(idx, 'badge', e.target.value)}
+                    />
+                  </label>
+                </div>
+                <div className='profile-form-grid'>
+                  <label className='field'>
+                    <span>Subtitle / Description</span>
+                    <input
+                      type='text'
+                      value={banner.subtitle || ''}
+                      onChange={(e) => updateBanner(idx, 'subtitle', e.target.value)}
+                    />
+                  </label>
+                  <label className='field'>
+                    <span>Link (internal or external)</span>
+                    <input
+                      type='text'
+                      value={banner.link || ''}
+                      onChange={(e) => updateBanner(idx, 'link', e.target.value)}
+                    />
+                  </label>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <button className='primary-button' type='submit' disabled={saving} style={{ alignSelf: 'flex-start', minWidth: 200 }}>
+          {saving ? 'Saving Banners…' : 'Save All 5 Banners'} <span>↗</span>
+        </button>
+      </form>
     </section>
   );
 }
 
+<<<<<<< HEAD
 function Overview({ data, products = [], busy, onPurchase, onCopy, support = {} }) {
   const wallet = data?.wallet;
   const [chatOpen, setChatOpen] = useState(false);
@@ -3891,6 +4915,118 @@ function Overview({ data, products = [], busy, onPurchase, onCopy, support = {} 
           <div className='home-product-grid'>
             {homeProducts.map((product) => {
               const rate = Number(product.dailyRate ?? 0.24);
+=======
+function Overview({ data, products = [], busy, onPurchase, onCopy, support = {}, onRefreshDashboard }) {
+  const { t } = useLanguage();
+  const wallet = data?.wallet;
+  const [unreadChatCount, setUnreadChatCount] = useState(0);
+  const homeProducts = [...products];
+
+  useEffect(() => {
+    let active = true;
+    const refreshUnreadChatCount = async () => {
+      try {
+        const result = await api('/support/chat/unread-count');
+        if (active) setUnreadChatCount(result.unreadCount);
+      } catch (cause) {
+        if (active) console.error('Unable to refresh unread support messages:', cause);
+      }
+    };
+    refreshUnreadChatCount();
+    const interval = window.setInterval(refreshUnreadChatCount, 15000);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
+  }, []);
+
+  const totalDepositVal = Math.floor(Number(data?.totalDeposit ?? 0));
+  const availableBalVal = Math.floor(Number(wallet?.availableBalance ?? 0));
+
+  return (
+    <div className='overview-container'>
+      {/* 1. NexGrid-Style Balance Card (Deposit & Withdrawal) */}
+      <section className='nexgrid-balance-card'>
+        <div className='nexgrid-balance-col'>
+          <span className='nexgrid-balance-label'>{t('DEPOSIT')}</span>
+          <strong className='nexgrid-balance-val'>ETB{totalDepositVal}</strong>
+        </div>
+        <div className='nexgrid-balance-divider' />
+        <div className='nexgrid-balance-col'>
+          <span className='nexgrid-balance-label'>{t('WITHDRAWAL')}</span>
+          <strong className='nexgrid-balance-val nexgrid-val-accent'>ETB{availableBalVal > 0 ? availableBalVal : 150}</strong>
+        </div>
+      </section>
+
+      {/* 2. Promotion Carousel (Replaces the referral link banner) */}
+      <section className='nexgrid-carousel-section'>
+        <PromotionBannerCarousel banners={support?.promotionBanners} />
+      </section>
+
+      {/* Floating Support Chat Widget */}
+      <div className='overview-chat-widget'>
+        <Link
+          className={`online-chat-icon ${unreadChatCount > 0 ? 'has-unread' : ''}`}
+          to='/support/chat'
+          aria-label={unreadChatCount > 0 ? `${t('Chat with Online Trade support')}, ${unreadChatCount} ${t('unread')}` : t('Chat with Online Trade support')}
+          title={t('Chat with Online Trade support')}
+        >
+          <MessageCircle size={22} />
+          {unreadChatCount > 0 && (
+            <span className='online-chat-unread-badge' aria-hidden='true'>
+              {unreadChatCount > 99 ? '99+' : unreadChatCount}
+            </span>
+          )}
+        </Link>
+      </div>
+
+      {/* 3. Quick Actions Grid */}
+      <section className='nexgrid-quick-actions-section'>
+        <h3 className='nexgrid-section-title'>{t('Quick Actions')}</h3>
+        <div className='nexgrid-actions-grid'>
+          <Link to='/recharge' className='nexgrid-action-card'>
+            <div className='nexgrid-action-icon-circle icon-circle-deposit'>
+              <CircleDollarSign size={24} />
+            </div>
+            <span className='nexgrid-action-name'>{t('Deposit')}</span>
+          </Link>
+          <Link to='/withdraw' className='nexgrid-action-card'>
+            <div className='nexgrid-action-icon-circle icon-circle-withdraw'>
+              <RotateCcw size={24} />
+            </div>
+            <span className='nexgrid-action-name'>{t('Withdraw')}</span>
+          </Link>
+          <CustomerPromotions onAwarded={onRefreshDashboard} display='tile' />
+          <Link to='/support/chat' className='nexgrid-action-card'>
+            <div className='nexgrid-action-icon-circle icon-circle-support'>
+              <Headphones size={24} />
+            </div>
+            <span className='nexgrid-action-name'>{t('Support')}</span>
+          </Link>
+          <Link to='/download' className='nexgrid-action-card'>
+            <div className='nexgrid-action-icon-circle icon-circle-app'>
+              <Smartphone size={24} />
+            </div>
+            <span className='nexgrid-action-name'>{t('APP')}</span>
+          </Link>
+        </div>
+      </section>
+
+      {/* 4. Featured Projects Section */}
+      <section className='featured-projects-section' id='home-products'>
+        <div className='featured-tab-bar'>
+          <div className='featured-tab-item active'>
+            <h2>{t('Featured Projects')}</h2>
+            <div className='featured-tab-indicator' />
+          </div>
+          <Link to='/products' className='featured-view-more'>{t('View all →')}</Link>
+        </div>
+
+        {homeProducts.length ? (
+          <div className='home-product-grid'>
+            {homeProducts.map((product) => {
+              const rate = Number(product.dailyRate ?? 0.05);
+>>>>>>> d1aaf18 (Update OnlineTrade project)
               const dailyRate = rate > 1 ? rate / 100 : rate;
               const dailyIncome = Number(product.price ?? 0) * dailyRate;
               const isComingSoon = product.status === 'COMING_SOON' || (product.availableFrom && new Date(product.availableFrom) > new Date());
@@ -3901,6 +5037,7 @@ function Overview({ data, products = [], busy, onPurchase, onCopy, support = {} 
                     <div className='home-product-title'>
                       <h3>{product.name}</h3>
                       <span className={`product-status ${isComingSoon ? 'coming-soon' : String(product.status).toLowerCase()}`}>
+<<<<<<< HEAD
                         {isComingSoon ? 'COMING SOON' : String(product.status).replaceAll('_', ' ')}
                       </span>
                     </div>
@@ -3910,6 +5047,17 @@ function Overview({ data, products = [], busy, onPurchase, onCopy, support = {} 
                       <Link className='secondary-button' to={`/products/${product.id}`}>Details</Link>
                       <button className='primary-button' type='button' disabled={busy || isComingSoon || product.status !== 'AVAILABLE'} onClick={() => onPurchase(product.id)}>
                         {isComingSoon ? 'Coming soon' : product.status === 'AVAILABLE' ? 'Buy' : 'Unavailable'}
+=======
+                        {isComingSoon ? t('COMING SOON') : t(String(product.status).replaceAll('_', ' '))}
+                      </span>
+                    </div>
+                    <strong className='home-product-price'>{money(product.price)}</strong>
+                    <span className='home-product-return'>{money(dailyIncome)} {t('daily return')} · {product.durationDays} {t('days')}</span>
+                    <div className='home-product-actions'>
+                      <Link className='secondary-button' to={`/products/${product.id}`}>{t('Details')}</Link>
+                      <button className='primary-button' type='button' disabled={busy || isComingSoon || product.status !== 'AVAILABLE'} onClick={() => onPurchase(product.id)}>
+                        {isComingSoon ? t('Coming soon') : product.status === 'AVAILABLE' ? t('Invest') : t('Unavailable')}
+>>>>>>> d1aaf18 (Update OnlineTrade project)
                       </button>
                     </div>
                   </div>
@@ -3917,9 +5065,35 @@ function Overview({ data, products = [], busy, onPurchase, onCopy, support = {} 
               );
             })}
           </div>
+<<<<<<< HEAD
         ) : <Empty>No products are listed yet.</Empty>}
       </section>
     </>
+=======
+        ) : <Empty>{t('No products are listed yet.')}</Empty>}
+      </section>
+
+      {/* 5. Referral Link moved to Footer */}
+      <section className='overview-footer-referral'>
+        <div className='footer-referral-content'>
+          <div className='footer-referral-badge'>
+            <Users size={14} /> {t('REFERRAL PROGRAM')}
+          </div>
+          <h3>{t('Share Online Trade & Earn 3-Level Commissions')}</h3>
+          <p>{t('Earn Level A (10%), Level B (3%), and Level C (2%) instant earnings when your team invests in fruit packages.')}</p>
+        </div>
+        <div className='footer-referral-box'>
+          <div className='footer-ref-code-display'>
+            <span>{t('Your Code:')}</span>
+            <strong>{data?.referralCode || 'OT-CODE'}</strong>
+          </div>
+          <button className='primary-button footer-ref-copy-btn' type='button' onClick={onCopy}>
+            {t('Copy Invite Link')} <Copy size={15} />
+          </button>
+        </div>
+      </section>
+    </div>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
   );
 }
 
@@ -3928,20 +5102,21 @@ function Metric({ label, value, tone = '', note = 'ACCOUNT SUMMARY' }) {
 }
 
 function Products({ items, busy, onPurchase }) {
+  const { t } = useLanguage();
   return (
     <>
       <div className='section-lead'>
         <div>
-          <p className='eyebrow'>AVAILABLE CATALOG</p>
-          <h2>Explore products</h2>
+          <p className='eyebrow'>{t('AVAILABLE CATALOG')}</p>
+          <h2>{t('Explore products')}</h2>
         </div>
-        <span className='quiet-label'>{items.length} LISTED</span>
+        <span className='quiet-label'>{items.length} {t('LISTED')}</span>
       </div>
       {items.length ? (
         <div className='product-grid'>
           {items.map((product) => {
             const price = Number(product.price ?? 0);
-            const rate = Number(product.dailyRate ?? 0.24);
+            const rate = Number(product.dailyRate ?? 0.05);
             const normalizedRate = rate > 1 ? rate / 100 : rate;
             const dailyIncome = price * normalizedRate;
             const isComingSoon = product.status === 'COMING_SOON' || (product.availableFrom && new Date(product.availableFrom) > new Date());
@@ -3950,27 +5125,27 @@ function Products({ items, busy, onPurchase }) {
                 <img className='customer-product-image' src={getProductImage(product)} alt={`${product.name} product`} loading='lazy' />
                 <div className='product-top'>
                   <span className={`product-status ${isComingSoon ? 'coming-soon' : product.status.toLowerCase()}`}>
-                    {isComingSoon ? 'COMING SOON' : product.status.replaceAll('_', ' ')}
+                    {isComingSoon ? t('COMING SOON') : t(product.status.replaceAll('_', ' '))}
                   </span>
                   <Package size={18} />
                 </div>
                 <h3>{product.name}</h3>
-                <p>{product.description || 'Daily income product package with guaranteed daily accrual.'}</p>
+                <p>{product.description || t('Daily income product package with guaranteed daily accrual.')}</p>
                 <div className='product-details'>
-                  <div><small>PRICE</small><strong>{money(product.price)}</strong></div>
-                  <div><small>DAILY RETURN ({Math.round(normalizedRate * 100)}%)</small><strong className='highlight-green'>{money(dailyIncome)} / day</strong></div>
-                  <div><small>DURATION</small><strong>{product.durationDays} days</strong></div>
-                  <div><small>TOTAL REVENUE</small><strong>{money(dailyIncome * product.durationDays)}</strong></div>
+                  <div><small>{t('PRICE')}</small><strong>{money(product.price)}</strong></div>
+                  <div><small>{t('DAILY RETURN')} ({Math.round(normalizedRate * 100)}%)</small><strong className='highlight-green'>{money(dailyIncome)} / {t('day')}</strong></div>
+                  <div><small>{t('DURATION')}</small><strong>{product.durationDays} {t('days')}</strong></div>
+                  <div><small>{t('TOTAL REVENUE')}</small><strong>{money(dailyIncome * product.durationDays)}</strong></div>
                 </div>
                 {isComingSoon && product.availableFrom && (
                   <div className='scheduled-badge'>
-                    Available: {new Date(product.availableFrom).toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                    {t('Available:')} {new Date(product.availableFrom).toLocaleString(undefined, { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                   </div>
                 )}
                 <div className='button-row'>
-                  <Link className='secondary-button' to={`/products/${product.id}`}>View details</Link>
+                  <Link className='secondary-button' to={`/products/${product.id}`}>{t('View details')}</Link>
                   <button className='primary-button' disabled={busy || isComingSoon || product.status !== 'AVAILABLE'} onClick={() => onPurchase(product.id)}>
-                    {isComingSoon ? 'Coming soon' : (product.status === 'AVAILABLE' ? 'Purchase product' : 'Not available')}
+                    {isComingSoon ? t('Coming soon') : (product.status === 'AVAILABLE' ? t('Invest') : t('Not available'))}
                     <span>↗</span>
                   </button>
                 </div>
@@ -3978,16 +5153,17 @@ function Products({ items, busy, onPurchase }) {
             );
           })}
         </div>
-      ) : <Empty>No products are listed yet.</Empty>}
+      ) : <Empty>{t('No products are listed yet.')}</Empty>}
     </>
   );
 }
 
 function ProductDetailPage({ product, onPurchase, busy }) {
-  if (!product) return <Empty>Product details are not available yet.</Empty>;
+  const { t } = useLanguage();
+  if (!product) return <Empty>{t('Product details are not available yet.')}</Empty>;
 
   const price = Number(product.price ?? 0);
-  const rate = Number(product.dailyRate ?? 0.24);
+  const rate = Number(product.dailyRate ?? 0.05);
   const normalizedRate = rate > 1 ? rate / 100 : rate;
   const dailyIncome = price * normalizedRate;
   const isComingSoon = product.status === 'COMING_SOON' || (product.availableFrom && new Date(product.availableFrom) > new Date());
@@ -3997,29 +5173,29 @@ function ProductDetailPage({ product, onPurchase, busy }) {
       <img className='customer-product-detail-image' src={getProductImage(product)} alt={`${product.name} product`} />
       <div className='section-lead'>
         <div>
-          <p className='eyebrow'>PRODUCT DETAILS</p>
+          <p className='eyebrow'>{t('PRODUCT DETAILS')}</p>
           <h2>{product.name}</h2>
         </div>
         <span className={`product-status ${isComingSoon ? 'coming-soon' : product.status.toLowerCase()}`}>
-          {isComingSoon ? 'COMING SOON' : product.status.replaceAll('_', ' ')}
+          {isComingSoon ? t('COMING SOON') : t(product.status.replaceAll('_', ' '))}
         </span>
       </div>
       <div className='product-details large'>
-        <div><small>PACKAGE PRICE</small><strong>{money(product.price)}</strong></div>
-        <div><small>DAILY RETURN ({Math.round(normalizedRate * 100)}%)</small><strong className='highlight-green'>{money(dailyIncome)} / day</strong></div>
-        <div><small>DURATION</small><strong>{product.durationDays ?? 30} days</strong></div>
-        <div><small>TOTAL ACCRUED RETURN</small><strong>{money(dailyIncome * (product.durationDays ?? 30))}</strong></div>
+        <div><small>{t('PACKAGE PRICE')}</small><strong>{money(product.price)}</strong></div>
+        <div><small>{t('DAILY RETURN')} ({Math.round(normalizedRate * 100)}%)</small><strong className='highlight-green'>{money(dailyIncome)} / {t('day')}</strong></div>
+        <div><small>{t('DURATION')}</small><strong>{product.durationDays ?? 30} {t('days')}</strong></div>
+        <div><small>{t('TOTAL ACCRUED RETURN')}</small><strong>{money(dailyIncome * (product.durationDays ?? 30))}</strong></div>
       </div>
-      <p>{product.description || 'Daily income product package with guaranteed daily accrual.'}</p>
+      <p>{product.description || t('Daily income product package with guaranteed daily accrual.')}</p>
       {isComingSoon && product.availableFrom && (
         <div className='scheduled-badge'>
-          Available: {new Date(product.availableFrom).toLocaleString(undefined, { month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+          {t('Available:')} {new Date(product.availableFrom).toLocaleString(undefined, { month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
         </div>
       )}
       <div className='button-row'>
-        <Link className='secondary-button' to='/products'>← Back to products</Link>
+        <Link className='secondary-button' to='/products'>← {t('Back to products')}</Link>
         <button className='primary-button' disabled={busy || isComingSoon || product.status !== 'AVAILABLE'} onClick={() => onPurchase(product.id)}>
-          {isComingSoon ? 'Coming soon' : (product.status === 'AVAILABLE' ? 'Purchase product' : 'Not available')}
+          {isComingSoon ? t('Coming soon') : (product.status === 'AVAILABLE' ? t('Invest') : t('Not available'))}
           <span>↗</span>
         </button>
       </div>
@@ -4028,6 +5204,7 @@ function ProductDetailPage({ product, onPurchase, busy }) {
 }
 
 function PurchasesPage() {
+  const { t } = useLanguage();
   const [purchases, setPurchases] = useState([]);
   useEffect(() => {
     api('/purchases').then(setPurchases).catch(() => setPurchases([]));
@@ -4036,12 +5213,21 @@ function PurchasesPage() {
     <section className='my-products-page'>
       <div className='section-lead'>
         <div>
+<<<<<<< HEAD
           <p className='eyebrow'>YOUR PACKAGES</p>
           <h2>My Products</h2>
         </div>
         <div className='my-products-actions'>
           <Link className='secondary-button' to='/dashboard#home-products'>Browse products</Link>
           <Link className='primary-button' to='/tasks'>Daily Tasks</Link>
+=======
+          <p className='eyebrow'>{t('YOUR INVESTMENTS')}</p>
+          <h2>{t('My Investments')}</h2>
+        </div>
+        <div className='my-products-actions'>
+          <Link className='secondary-button' to='/dashboard#home-products'>{t('Browse products')}</Link>
+          <Link className='primary-button' to='/tasks'>{t('Daily Tasks')}</Link>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
         </div>
       </div>
       {purchases.length ? (
@@ -4055,12 +5241,17 @@ function PurchasesPage() {
                 <div className='my-product-content'>
                   <div className='my-product-heading'>
                     <div>
+<<<<<<< HEAD
                       <p className='eyebrow'>VIP LEVEL</p>
+=======
+                      <p className='eyebrow'>{t('VIP LEVEL')}</p>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
                       <h3>{item.name}</h3>
                     </div>
                     <StatusBadge status={item.status} />
                   </div>
                   <div className='my-product-metrics'>
+<<<<<<< HEAD
                     <div><small>AMOUNT</small><strong>{money(item.amount)}</strong></div>
                     <div><small>DAILY RETURN</small><strong className='highlight-green'>{money(dailyReturn)}</strong></div>
                     <div><small>DURATION</small><strong>{item.durationDays} days</strong></div>
@@ -4068,24 +5259,42 @@ function PurchasesPage() {
                   <div className='my-product-dates'>
                     <span>Purchased {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : '—'}</span>
                     <span>Activated {item.activatedAt ? new Date(item.activatedAt).toLocaleString() : '—'}</span>
+=======
+                    <div><small>{t('AMOUNT')}</small><strong>{money(item.amount)}</strong></div>
+                    <div><small>{t('DAILY RETURN')}</small><strong className='highlight-green'>{money(dailyReturn)}</strong></div>
+                    <div><small>{t('DURATION')}</small><strong>{item.durationDays} {t('days')}</strong></div>
+                  </div>
+                  <div className='my-product-dates'>
+                    <span>{t('Invested')} {item.createdAt ? new Date(item.createdAt).toLocaleDateString() : '—'}</span>
+                    <span>{t('Activated')} {item.activatedAt ? new Date(item.activatedAt).toLocaleString() : '—'}</span>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
                   </div>
                 </div>
               </article>
             );
           })}
         </div>
+<<<<<<< HEAD
       ) : <section className='surface form-surface my-products-empty'><Empty>No purchased products yet.</Empty><div className='my-products-actions'><Link className='primary-button' to='/dashboard#home-products'>Browse products</Link><Link className='secondary-button' to='/tasks'>Daily Tasks</Link></div></section>}
+=======
+      ) : <section className='surface form-surface my-products-empty'><Empty>{t('No investments yet.')}</Empty><div className='my-products-actions'><Link className='primary-button' to='/dashboard#home-products'>{t('Browse products')}</Link><Link className='secondary-button' to='/tasks'>{t('Daily Tasks')}</Link></div></section>}
+>>>>>>> d1aaf18 (Update OnlineTrade project)
     </section>
   );
 }
 
 function Team({ summary, members, loading, error, onDismissError, code, referralLink, rates, onCopyCode, onCopyLink, onShare }) {
+<<<<<<< HEAD
   const safeRates = rates ?? { A: 22, B: 2, C: 1 };
+=======
+  const { t } = useLanguage();
+  const safeRates = rates ?? { A: 10, B: 3, C: 2 };
+>>>>>>> d1aaf18 (Update OnlineTrade project)
   const safeMembers = Array.isArray(members) ? members : [];
   const levelCards = [
-    { name: 'Level A', rate: safeRates.A ?? 22, value: summary?.aLevel },
-    { name: 'Level B', rate: safeRates.B ?? 2, value: summary?.bLevel },
-    { name: 'Level C', rate: safeRates.C ?? 1, value: summary?.cLevel },
+    { name: 'Level A', rate: safeRates.A ?? 10, value: summary?.aLevel },
+    { name: 'Level B', rate: safeRates.B ?? 3, value: summary?.bLevel },
+    { name: 'Level C', rate: safeRates.C ?? 2, value: summary?.cLevel },
   ];
 
   const totalMembers = summary?.total?.userCount ?? 0;
@@ -4095,7 +5304,7 @@ function Team({ summary, members, loading, error, onDismissError, code, referral
   const shareFallback = async () => {
     if (navigator.share && referralLink) {
       try {
-        await navigator.share({ title: 'MKM Referral', text: `Join me on MKM: ${referralLink}`, url: referralLink });
+        await navigator.share({ title: 'Online Trade Referral', text: `Join me on Online Trade: ${referralLink}`, url: referralLink });
         return;
       } catch {
         // The user cancelled the share sheet; fall through to copy fallback.
@@ -4103,71 +5312,75 @@ function Team({ summary, members, loading, error, onDismissError, code, referral
     }
     await navigator.clipboard?.writeText(referralLink ?? '').catch(() => undefined);
   };
-  const whatsappShareUrl = referralLink ? `https://wa.me/?text=${encodeURIComponent(`Join me on MKM: ${referralLink}`)}` : '';
+  const whatsappShareUrl = referralLink ? `https://wa.me/?text=${encodeURIComponent(`Join me on Online Trade: ${referralLink}`)}` : '';
 
   return (
     <>
       <div className='section-lead'>
         <div>
-          <p className='eyebrow'>YOUR NETWORK</p>
-          <h2>Share & Earn</h2>
+          <p className='eyebrow'>{t('YOUR NETWORK')}</p>
+          <h2>{t('Share & Earn')}</h2>
         </div>
+<<<<<<< HEAD
         {loading && <p className='quiet-label' role='status'>Loading referral details…</p>}
+=======
+        {loading && <p className='quiet-label' role='status'>{t('Loading referral details…')}</p>}
+>>>>>>> d1aaf18 (Update OnlineTrade project)
         {error && <ErrorToast message={error} onDismiss={onDismissError} />}
       </div>
 
       <section className='surface form-surface referral-share-box'>
         <div className='referral-share-header'>
           <div>
-            <p className='eyebrow'>YOUR REFERRAL CODE</p>
+            <p className='eyebrow'>{t('YOUR REFERRAL CODE')}</p>
             <h3>{code ?? 'Loading…'}</h3>
           </div>
-          <button className='secondary-button' onClick={onCopyCode}><Copy size={15} /> Copy code</button>
+          <button className='secondary-button' onClick={onCopyCode}><Copy size={15} /> {t('Copy code')}</button>
         </div>
 
         <div className='referral-link-block'>
-          <label className='field'><span>Referral Link</span><input type='text' value={referralLink ?? ''} readOnly /></label>
+          <label className='field'><span>{t('Referral Link')}</span><input type='text' value={referralLink ?? ''} readOnly /></label>
         </div>
 
         <div className='button-row'>
-          <button type='button' className='secondary-button' onClick={onCopyLink}>Copy link</button>
+          <button type='button' className='secondary-button' onClick={onCopyLink}>{t('Copy link')}</button>
           {whatsappShareUrl && <a className='secondary-button' href={whatsappShareUrl} target='_blank' rel='noreferrer'>WhatsApp</a>}
-          <button type='button' className='primary-button' onClick={onShare ?? shareFallback}>Share</button>
+          <button type='button' className='primary-button' onClick={onShare ?? shareFallback}>{t('Share')}</button>
         </div>
       </section>
 
       <div className='level-grid'>
-        <Metric label='Total Referrals' value={totalMembers} note='TEAM MEMBERS' />
-        <Metric label='Active Referrals' value={activeMembers} tone={activeMembers > 0 ? 'positive' : ''} note='RECHARGED' />
-        <Metric label='Total Earnings' value={money(totalEarnings)} tone='positive' note='COMMISSION' />
+        <Metric label={t('Total Referrals')} value={totalMembers} note={t('TEAM MEMBERS')} />
+        <Metric label={t('Active Referrals')} value={activeMembers} tone={activeMembers > 0 ? 'positive' : ''} note={t('RECHARGED')} />
+        <Metric label={t('Total Earnings')} value={money(totalEarnings)} tone='positive' note={t('COMMISSION')} />
       </div>
 
       <div className='level-grid'>
         {levelCards.map(({ name, rate, value }) => (
-          <Metric key={name} label={`${name} · ${rate}%`} value={`${value?.userCount ?? 0} / ${value?.activeUserCount ?? 0}`} note='TOTAL / ACTIVE' />
+          <Metric key={name} label={`${t(name)} · ${rate}%`} value={`${value?.userCount ?? 0} / ${value?.activeUserCount ?? 0}`} note={t('TOTAL / ACTIVE')} />
         ))}
       </div>
 
       <section className='surface table-surface'>
         <div className='surface-heading'>
           <div>
-            <p className='eyebrow'>MEMBERS</p>
-            <h3>Referral history</h3>
+            <p className='eyebrow'>{t('MEMBERS')}</p>
+            <h3>{t('Referral history')}</h3>
           </div>
-          <span className='quiet-label'>LEVELS A–C</span>
+          <span className='quiet-label'>{t('LEVELS A–C')}</span>
         </div>
         {safeMembers.length ? (
           <div className='table-wrap'>
             <table>
               <thead>
-                <tr><th>Member</th><th>Level</th><th>Status</th><th>Approved recharge</th><th>Joined</th></tr>
+                <tr><th>{t('Member')}</th><th>{t('Level')}</th><th>{t('Status')}</th><th>{t('Approved recharge')}</th><th>{t('Joined')}</th></tr>
               </thead>
               <tbody>
                 {safeMembers.map((member) => (
                   <tr key={member.id}>
                     <td><strong>{member.fullName}</strong><small>{member.phoneNumber}</small></td>
                     <td><span className={`level-tag level-${(member.level ?? '').toLowerCase()}`}>{member.level}</span></td>
-                    <td>{Number(member.approvedRechargeTotal ?? 0) > 0 ? <span className='status-active'>Active</span> : <span className='status-inactive'>Inactive</span>}</td>
+                    <td>{Number(member.approvedRechargeTotal ?? 0) > 0 ? <span className='status-active'>{t('Active')}</span> : <span className='status-inactive'>{t('Inactive')}</span>}</td>
                     <td>{money(member.approvedRechargeTotal)}</td>
                     <td>{member.registeredAt ? new Date(member.registeredAt).toLocaleDateString() : '—'}</td>
                   </tr>
@@ -4175,70 +5388,83 @@ function Team({ summary, members, loading, error, onDismissError, code, referral
               </tbody>
             </table>
           </div>
-        ) : <Empty>Your team members will appear here.</Empty>}
+        ) : <Empty>{t('Your team members will appear here.')}</Empty>}
       </section>
     </>
   );
 }
 
-function Recharge({ methods, history, busy, onSubmit, settings }) {
+function RechargeProgress({ step }) {
+  const { t } = useLanguage();
+  const steps = ['Amount', 'Bank', 'Transfer'];
+  return (
+    <div className='recharge-progress' aria-label={`${t('Step')} ${step} ${t('of')} 3: ${t(steps[step - 1])}`}>
+      {steps.map((label, index) => {
+        const number = index + 1;
+        return (
+          <div key={label} className={`recharge-progress-step ${number === step ? 'active' : ''} ${number < step ? 'complete' : ''}`}>
+            <span>{number < step ? '✓' : number}</span>
+            <small>{t(label)}</small>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+function Recharge({ settings }) {
+  const { t } = useLanguage();
   const navigate = useNavigate();
-  const [customAmount, setCustomAmount] = useState('');
-  const [selectedPreset, setSelectedPreset] = useState('1000');
-  const [selectedMethodId, setSelectedMethodId] = useState(methods[0]?.id ?? '');
+  const location = useLocation();
+  const incomingAmount = location.state?.amount ?? new URLSearchParams(location.search).get('amount');
+  const presetAmounts = [300, 600, 1000, 1800, 3000, 8000, 20000, 50000];
+  const initialAmount = String(incomingAmount ?? '3000');
+  const [customAmount, setCustomAmount] = useState(presetAmounts.includes(Number(initialAmount)) ? '' : initialAmount);
+  const [selectedPreset, setSelectedPreset] = useState(presetAmounts.includes(Number(initialAmount)) ? initialAmount : '');
   const [localError, setLocalError] = useState('');
   const minimumRechargeAmount = Number(settings?.minimumRechargeAmount ?? 300);
   const maximumRechargeAmount = Number(settings?.maximumRechargeAmount ?? 1000000);
-  const presetAmounts = [300, 600, 1000, 1800, 8000, 20000, 50000, 100000];
   const selectedAmount = Number(customAmount || selectedPreset || 0);
 
-  useEffect(() => {
-    if (!selectedMethodId && methods.length) {
-      setSelectedMethodId(methods[0].id);
-    }
-  }, [methods, selectedMethodId]);
-
-  const continueToPayment = () => {
+  const continueToBanks = (event) => {
+    event.preventDefault();
     if (!selectedAmount || selectedAmount < minimumRechargeAmount) {
-      setLocalError(`Minimum recharge amount is ${minimumRechargeAmount.toLocaleString()} ETB.`);
+      setLocalError(`${t('Minimum recharge amount is')} ${minimumRechargeAmount.toLocaleString()} ETB.`);
       return;
     }
     if (selectedAmount > maximumRechargeAmount) {
-      setLocalError(`Maximum recharge amount is ${maximumRechargeAmount.toLocaleString()} ETB.`);
-      return;
-    }
-    if (!selectedMethodId) {
-      setLocalError('Please select a payment method.');
+      setLocalError(`${t('Maximum recharge amount is')} ${maximumRechargeAmount.toLocaleString()} ETB.`);
       return;
     }
     setLocalError('');
-    const method = methods.find((item) => item.id === selectedMethodId);
-    navigate('/recharge/payment', { state: { amount: selectedAmount, paymentMethodId: selectedMethodId, method } });
+    navigate(`/recharge/bank?amount=${encodeURIComponent(selectedAmount)}`, { state: { amount: selectedAmount } });
   };
 
   return (
     <div className='recharge-page'>
+<<<<<<< HEAD
       <div className='section-lead'>
         <div>
           <p className='eyebrow'>ADD FUNDS</p>
           <h2>Recharge Wallet</h2>
+=======
+      <section className='surface recharge-mobile-screen'>
+        <div className='recharge-screen-header'>
+          <button className='recharge-screen-back' type='button' onClick={() => navigate('/my')} aria-label={t('Back to My page')}><ChevronLeft size={20} /></button>
+          <div><p className='eyebrow'>{t('ADD FUNDS')}</p><h2>{t('Recharge Wallet')}</h2></div>
+          <Link className='recharge-history-shortcut' to='/recharge/history'>{t('History')}</Link>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
         </div>
-        <button className='secondary-button' type='button' onClick={() => navigate('/recharge/history')}>
-          Recharge history
-        </button>
-      </div>
-
-      <div className='form-layout'>
-        <div className='surface form-surface form-stack'>
+        <RechargeProgress step={1} />
+        <form className='form-stack recharge-main-card' onSubmit={continueToBanks}>
           <div className='surface-heading'>
             <div>
-              <p className='eyebrow'>STEP 1</p>
-              <h3>Select Amount</h3>
+              <h3>{t('Select Amount')}</h3>
             </div>
             <span className='quiet-label'>MIN: {minimumRechargeAmount} ETB</span>
           </div>
 
-          <p className='form-subtitle'>Choose a preset recharge amount or enter your custom amount (300 ETB or higher):</p>
+          <p className='form-subtitle'>{t('Choose an amount to add to your wallet.')}</p>
           <div className='preset-amount-grid'>
             {presetAmounts.map((amount) => (
               <button
@@ -4248,13 +5474,13 @@ function Recharge({ methods, history, busy, onSubmit, settings }) {
                 onClick={() => { setSelectedPreset(String(amount)); setCustomAmount(''); setLocalError(''); }}
               >
                 <strong>{amount.toLocaleString()} ETB</strong>
-                <small>{amount >= 8000 ? 'VIP Tier' : 'Standard'}</small>
+                <small>{amount >= 8000 ? t('VIP Tier') : t('Standard')}</small>
               </button>
             ))}
           </div>
 
           <label className='field'>
-            <span>Or enter custom amount (ETB)</span>
+            <span>{t('Or enter custom amount (ETB)')}</span>
             <input
               type='number'
               min={minimumRechargeAmount}
@@ -4262,10 +5488,11 @@ function Recharge({ methods, history, busy, onSubmit, settings }) {
               step='0.01'
               value={customAmount}
               onChange={(event) => { setCustomAmount(event.target.value); setSelectedPreset(''); setLocalError(''); }}
-              placeholder={`Enter amount (minimum ${minimumRechargeAmount.toLocaleString()} ETB)`}
+              placeholder={`${t('Enter amount (minimum')} ${minimumRechargeAmount.toLocaleString()} ETB)`}
             />
           </label>
 
+<<<<<<< HEAD
           <div className='selected-summary-bar'>
             <span>Recharge Amount:</span>
             <strong>{selectedAmount ? `${selectedAmount.toLocaleString()} ETB` : '0.00 ETB'}</strong>
@@ -4275,24 +5502,52 @@ function Recharge({ methods, history, busy, onSubmit, settings }) {
             <div>
               <p className='eyebrow'>STEP 2</p>
               <h3>Payment Method</h3>
+=======
+          <div className='order-amount-banner'>
+            <span className='order-amount-label'>{t('Deposit amount')}</span>
+            <div className='order-amount-value'>
+              ETB {selectedAmount ? Number(selectedAmount).toFixed(2) : '0.00'}
+>>>>>>> d1aaf18 (Update OnlineTrade project)
             </div>
           </div>
-          <p className='form-subtitle'>Select the payment method to receive external transfer instructions:</p>
 
-          <div className='payment-method-selector-grid'>
-            {methods.filter((method) => method.isActive !== false).map((method) => (
-              <button
-                type='button'
-                key={method.id}
-                className={`method-select-card ${selectedMethodId === method.id ? 'active' : ''}`}
-                onClick={() => { setSelectedMethodId(method.id); setLocalError(''); }}
-              >
-                <div className='method-select-icon'>🏦</div>
-                <strong>{method.name}</strong>
-                <small>{/telebirr/i.test(method.name) ? 'Mobile Money' : 'Bank Transfer'}</small>
-              </button>
-            ))}
+          {localError && <ErrorToast message={localError} onDismiss={() => setLocalError('')} />}
+          <button className='primary-button recharge-next-button' type='submit'>
+            {t('Continue to payment')} <ChevronRight size={19} />
+          </button>
+        </form>
+      </section>
+    </div>
+  );
+}
+
+function RechargeBankSelectionPage({ methods }) {
+  const { t } = useLanguage();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const params = new URLSearchParams(location.search);
+  const amount = Number(location.state?.amount ?? params.get('amount'));
+  const selectedMethodId = params.get('methodId');
+  const activeMethods = [...methods]
+    .filter((method) => method.isActive !== false)
+    .sort((a, b) => (a.displayOrder ?? 0) - (b.displayOrder ?? 0));
+
+  if (!amount) return <Navigate to='/recharge' replace />;
+
+  return (
+    <div className='recharge-page'>
+      <section className='surface recharge-mobile-screen'>
+        <div className='recharge-screen-header'>
+          <button className='recharge-screen-back' type='button' onClick={() => navigate(`/recharge?amount=${encodeURIComponent(amount)}`, { state: { amount } })} aria-label={t('Back to amount selection')}><ChevronLeft size={20} /></button>
+          <div><p className='eyebrow'>{t('ADD FUNDS')}</p><h2>{t('Payment method')}</h2></div>
+          <span className='recharge-step-placeholder' aria-hidden='true' />
+        </div>
+        <RechargeProgress step={2} />
+        <div className='recharge-step-content'>
+          <div className='recharge-selected-amount'>
+            <span>{t('Deposit amount')}</span><strong>{money(amount)}</strong>
           </div>
+<<<<<<< HEAD
 
           {localError && <ErrorToast message={localError} onDismiss={() => setLocalError('')} />}
 
@@ -4313,16 +5568,44 @@ function Recharge({ methods, history, busy, onSubmit, settings }) {
           <History rows={history} />
         </section>
       </div>
+=======
+          <div>
+            <h3 className='choose-payment-title'>{t('Choose your bank or wallet')}</h3>
+            {activeMethods.length ? (
+              <div className='payment-method-list'>
+                {activeMethods.map((method) => (
+                  <button
+                    type='button'
+                    key={method.id}
+                    className={`payment-method-row recharge-method-row ${selectedMethodId === method.id ? 'selected' : ''}`}
+                    aria-pressed={selectedMethodId === method.id}
+                    onClick={() => navigate(`/recharge/payment?amount=${encodeURIComponent(amount)}&methodId=${encodeURIComponent(method.id)}`, { state: { amount, paymentMethodId: method.id } })}
+                  >
+                    <div className='payment-method-row-main'><BankLogo name={method.name} className='payment-bank-logo' /><span className='payment-bank-name'>{method.name}</span></div>
+                    <ChevronRight size={20} className='payment-method-chevron' />
+                  </button>
+                ))}
+              </div>
+            ) : <Empty>{t('No payment methods are available.')}</Empty>}
+          </div>
+          <div className='friendly-reminder-box'>
+            <div className='friendly-reminder-icon'><CircleAlert size={20} /></div>
+            <div className='friendly-reminder-content'>{t('Choose the bank or wallet you will use to make the transfer.')}</div>
+          </div>
+        </div>
+      </section>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
     </div>
   );
 }
 
 function RechargePaymentPage({ methods, settings, onCustomerSuccess }) {
+  const { t } = useLanguage();
   const navigate = useNavigate();
   const location = useLocation();
   const params = new URLSearchParams(location.search);
   const selectedMethodId = location.state?.paymentMethodId ?? params.get('methodId') ?? methods[0]?.id ?? '';
-  const amount = Number(location.state?.amount ?? params.get('amount') ?? 1000);
+  const amount = Number(location.state?.amount ?? params.get('amount') ?? 3000);
   const [selected, setSelected] = useState(methods.find((method) => method.id === selectedMethodId) ?? methods[0] ?? null);
   const [copiedField, setCopiedField] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -4333,14 +5616,14 @@ function RechargePaymentPage({ methods, settings, onCustomerSuccess }) {
     setSelected(methods.find((method) => method.id === selectedMethodId) ?? methods[0] ?? null);
   }, [methods, selectedMethodId]);
 
-  if (!selected) return <Empty>No payment methods are available. <Link to='/recharge'>Back to recharge</Link></Empty>;
+  if (!selected) return <Empty>{t('No payment methods are available.')} <Link to='/recharge'>{t('Back to recharge')}</Link></Empty>;
 
   const isTelebirr = /telebirr/i.test(selected.name ?? '');
   const accountValue = isTelebirr
     ? (selected.phoneNumber ?? selected.accountNumber ?? '0929688828')
     : (selected.accountNumber ?? selected.phoneNumber ?? '');
   const accountName = selected.accountName || (isTelebirr ? 'Markos' : 'Tesema');
-  const copyLabel = isTelebirr ? 'Copy Phone Number' : 'Copy Account Number';
+  const copyLabel = isTelebirr ? t('Copy Phone Number') : t('Copy Account Number');
 
   const copyToClipboard = (text, fieldName) => {
     if (!text) return;
@@ -4359,7 +5642,7 @@ function RechargePaymentPage({ methods, settings, onCustomerSuccess }) {
       const form = new FormData(formElement);
       const reference = String(form.get('transactionReference') ?? '').trim();
       if (reference.length < 5) {
-        throw new Error('FT / Transaction reference must be at least 5 digits/characters.');
+        throw new Error(t('FT / Transaction reference must be at least 5 digits/characters.'));
       }
       form.set('amount', String(amount));
       form.set('paymentMethodId', selected.id);
@@ -4369,7 +5652,7 @@ function RechargePaymentPage({ methods, settings, onCustomerSuccess }) {
         body: form,
       });
 
-      onCustomerSuccess?.('Recharge submitted successfully and is pending review.');
+      onCustomerSuccess?.(t('Recharge submitted successfully and is pending review.'));
       navigate('/recharge/history');
     } catch (cause) {
       setFormError(cause.message || 'Unable to submit recharge request.');
@@ -4380,39 +5663,61 @@ function RechargePaymentPage({ methods, settings, onCustomerSuccess }) {
 
   return (
     <div className='recharge-payment-container'>
-      <div className='section-lead'>
-        <div>
-          <p className='eyebrow'>STEP 2 OF 2</p>
-          <h2>Payment Method Details</h2>
+      <section className='surface recharge-mobile-screen recharge-transfer-screen'>
+        <div className='recharge-screen-header'>
+          <button className='recharge-screen-back' type='button' onClick={() => navigate(`/recharge/bank?amount=${encodeURIComponent(amount)}&methodId=${encodeURIComponent(selected.id)}`, { state: { amount } })} aria-label={t('Back to payment methods')}><ChevronLeft size={20} /></button>
+          <div><p className='eyebrow'>{t('ADD FUNDS')}</p><h2>{t('Transfer details')}</h2></div>
+          <span className='recharge-step-placeholder' aria-hidden='true' />
         </div>
-        <button className='secondary-button' type='button' onClick={() => navigate('/recharge')}>
-          ← Change Amount or Method
-        </button>
+        <RechargeProgress step={3} />
+
+      <div className='order-amount-banner'>
+        <span className='order-amount-label'>{t('Order Amount')}</span>
+        <div className='order-amount-value'>
+          ETB {amount ? Number(amount).toFixed(2) : '3000.00'}
+        </div>
+      </div>
+
+      <div className='selected-payment-channel'>
+        <BankLogo name={selected.name} className='selected-payment-channel-logo' />
+        <div className='selected-payment-channel-name'><small>{t('PAYMENT CHANNEL')}</small><strong>{selected.name}</strong></div>
       </div>
 
       <div className='payment-instruction-box'>
         <div className='payment-card-header'>
-          <div>
-            <span className='provider-pill'>{selected.name}</span>
-            <h3 style={{ margin: '8px 0 4px', fontSize: '22px' }}>{selected.name} Deposit Account</h3>
-            <p style={{ margin: 0, color: 'var(--muted)', fontSize: '13px' }}>
-              Please make the external payment first. After payment, submit your transaction information below.
-            </p>
+          <div className='payment-header-brand-wrap'>
+            <BankLogo name={selected.name} className='payment-header-logo recharge-payment-logo' />
+            <div>
+              <span className='provider-pill'>{selected.name}</span>
+              <h3 style={{ margin: '6px 0 2px', fontSize: '20px' }}>{selected.name} {t('Deposit Account')}</h3>
+              <p style={{ margin: 0, color: 'var(--muted)', fontSize: '12px' }}>
+                {t('Please make the bank/wallet transfer using the details below, then enter your transaction reference.')}
+              </p>
+            </div>
           </div>
           <div className='amount-highlight-badge'>
-            <small>AMOUNT TO TRANSFER</small>
-            <strong>{amount ? `${amount.toLocaleString()} ETB` : '—'}</strong>
+            <small>{t('AMOUNT TO TRANSFER')}</small>
+            <strong>{amount ? `ETB ${Number(amount).toFixed(2)}` : '—'}</strong>
           </div>
         </div>
 
         <div className='payment-credentials-grid'>
           <div className='credential-item'>
-            <small>ACCOUNT HOLDER / BENEFICIARY</small>
-            <strong>{accountName}</strong>
+            <small>{t('ACCOUNT HOLDER / BENEFICIARY')}</small>
+            <div className='credential-copy-row'>
+              <span className='credential-value'>{accountName}</span>
+              <button
+                type='button'
+                className='copy-action-btn'
+                onClick={() => copyToClipboard(accountName, 'accountName')}
+              >
+                {copiedField === 'accountName' ? `✓ ${t('Copied')}` : t('Copy Name')}
+              </button>
+            </div>
           </div>
 
           <div className='credential-item'>
-            <small>{isTelebirr ? 'PHONE NUMBER' : 'ACCOUNT NUMBER'}</small>
+            <small>{isTelebirr ? t('PHONE NUMBER') : t('ACCOUNT NUMBER')}</small>
             <div className='credential-copy-row'>
               <span className='credential-value'>{accountValue || '—'}</span>
               <button
@@ -4420,21 +5725,21 @@ function RechargePaymentPage({ methods, settings, onCustomerSuccess }) {
                 className='copy-action-btn'
                 onClick={() => copyToClipboard(accountValue, 'account')}
               >
-                {copiedField === 'account' ? '✓ Copied' : copyLabel}
+                {copiedField === 'account' ? `✓ ${t('Copied')}` : copyLabel}
               </button>
             </div>
           </div>
 
           <div className='credential-item'>
-            <small>TRANSFER AMOUNT</small>
+            <small>{t('TRANSFER AMOUNT')}</small>
             <div className='credential-copy-row'>
-              <span className='credential-value'>{amount ? `${amount.toLocaleString()} ETB` : '—'}</span>
+              <span className='credential-value'>{amount ? `ETB ${Number(amount).toFixed(2)}` : '—'}</span>
               <button
                 type='button'
                 className='copy-action-btn'
                 onClick={() => copyToClipboard(String(amount), 'amount')}
               >
-                {copiedField === 'amount' ? '✓ Copied' : 'Copy Amount'}
+                {copiedField === 'amount' ? `✓ ${t('Copied')}` : t('Copy Amount')}
               </button>
             </div>
           </div>
@@ -4442,16 +5747,28 @@ function RechargePaymentPage({ methods, settings, onCustomerSuccess }) {
 
         {selected.instructions && (
           <div className='payment-note-box'>
-            <strong>Instructions:</strong> {selected.instructions}
+            <strong>{t('Instructions:')}</strong> {selected.instructions}
           </div>
         )}
       </div>
 
+<<<<<<< HEAD
+=======
+      <div className='friendly-reminder-box'>
+        <div className='friendly-reminder-icon'>
+          <CircleAlert size={20} />
+        </div>
+        <div className='friendly-reminder-content'>
+          <strong>{t('Friendly reminder:')}</strong> {t('Please use the corresponding bank to complete the transfer. Please do not use interbank transfers from other banks to avoid delays and inconvenience. Thank you for your understanding!')}
+        </div>
+      </div>
+
+>>>>>>> d1aaf18 (Update OnlineTrade project)
       <section className='surface form-surface form-stack recharge-payment-verification'>
         <div className='surface-heading'>
           <div>
-            <p className='eyebrow'>VERIFICATION</p>
-            <h3>Submit Transaction Information</h3>
+            <p className='eyebrow'>{t('VERIFICATION')}</p>
+            <h3>{t('Submit Transaction Information')}</h3>
           </div>
         </div>
 
@@ -4462,7 +5779,7 @@ function RechargePaymentPage({ methods, settings, onCustomerSuccess }) {
           <input type='hidden' name='paymentMethodId' value={selected.id} />
 
           <label className='field'>
-            <span>FT / Transaction Reference * (at least 5 characters)</span>
+            <span>{t('FT / Transaction Reference * (at least 5 characters)')}</span>
             <input
               name='transactionReference'
               defaultValue='FT'
@@ -4471,48 +5788,50 @@ function RechargePaymentPage({ methods, settings, onCustomerSuccess }) {
               maxLength={120}
               required
             />
-            <small>FT is prefilled. Complete it with the exact reference from your SMS or receipt.</small>
+            <small>{t('FT is prefilled. Complete it with the exact reference from your SMS or receipt.')}</small>
           </label>
 
           <button className='secondary-button' type='button' aria-expanded={showOtherOptions} onClick={() => setShowOtherOptions((open) => !open)}>
-            {showOtherOptions ? 'Hide other options' : 'Other options'}
+            {showOtherOptions ? t('Hide other options') : t('Other options')}
           </button>
 
           {showOtherOptions && (
             <>
               <label className='field'>
-                <span>Sender Full Name (optional)</span>
-                <input name='senderName' placeholder='Name on external bank/wallet account' />
+                <span>{t('Sender Full Name (optional)')}</span>
+                <input name='senderName' placeholder={t('Name on external bank/wallet account')} />
               </label>
 
               <label className='field'>
-                <span>Sender Account Number / Phone (optional)</span>
-                <input name='senderAccount' placeholder='Your bank account or phone number used' />
+                <span>{t('Sender Account Number / Phone (optional)')}</span>
+                <input name='senderAccount' placeholder={t('Your bank account or phone number used')} />
               </label>
 
               <label className='field'>
-                <span>Payment Proof Screenshot / Receipt (optional)</span>
+                <span>{t('Payment Proof Screenshot / Receipt (optional)')}</span>
                 <input name='proof' type='file' accept='image/jpeg,image/png,image/webp,application/pdf' />
-                <small>Accepted formats: JPG, JPEG, PNG, WEBP, PDF up to 5 MB. You can also upload it later in Recharge History.</small>
+                <small>{t('Accepted formats: JPG, JPEG, PNG, WEBP, PDF up to 5 MB. You can also upload it later in Recharge History.')}</small>
               </label>
             </>
           )}
 
           <div className='button-row' style={{ marginTop: '12px' }}>
             <button className='primary-button large-btn' type='submit' disabled={submitting}>
-              {submitting ? 'Submitting for review…' : 'Submit Recharge Information'} <span>↗</span>
+              {submitting ? t('Submitting for review…') : t('Submit Recharge Information')} <span>↗</span>
             </button>
             <button className='secondary-button' type='button' onClick={() => navigate('/recharge')}>
-              Cancel
+              {t('Cancel')}
             </button>
           </div>
         </form>
+      </section>
       </section>
     </div>
   );
 }
 
 function RechargeHistoryPage() {
+  const { t } = useLanguage();
   const [items, setItems] = useState([]);
   const [uploadingId, setUploadingId] = useState(null);
   const [feedback, setFeedback] = useState('');
@@ -4557,7 +5876,7 @@ function RechargeHistoryPage() {
         method: 'POST',
         body: formData,
       });
-      setFeedback('Payment proof uploaded successfully!');
+      setFeedback(t('Payment proof uploaded successfully!'));
       await loadHistory();
     } catch (cause) {
       setError(cause.message || 'Unable to upload payment proof.');
@@ -4570,10 +5889,10 @@ function RechargeHistoryPage() {
     <section className='surface table-surface recharge-history-page'>
       <div className='surface-heading'>
         <div>
-          <p className='eyebrow'>RECHARGE HISTORY</p>
-          <h3>Submitted recharge transactions</h3>
+          <p className='eyebrow'>{t('RECHARGE HISTORY')}</p>
+          <h3>{t('Submitted recharge transactions')}</h3>
         </div>
-        <Link className='secondary-button' to='/recharge'>+ New Recharge</Link>
+        <Link className='secondary-button' to='/recharge'>+ {t('New Recharge')}</Link>
       </div>
 
       {feedback && <SuccessToast message={feedback} onDismiss={() => setFeedback('')} />}
@@ -4583,14 +5902,22 @@ function RechargeHistoryPage() {
         <div className='history-load-error' role='alert'>
           <span className='history-load-error-icon' aria-hidden='true'>!</span>
           <div>
+<<<<<<< HEAD
             <strong>History could not be loaded</strong>
             <p>{loadError}</p>
           </div>
           <button className='secondary-button' type='button' onClick={loadHistory}>Try again</button>
+=======
+            <strong>{t('History could not be loaded')}</strong>
+            <p>{loadError}</p>
+          </div>
+          <button className='secondary-button' type='button' onClick={loadHistory}>{t('Try again')}</button>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
         </div>
       ) : loading ? (
         <div className='history-loading' role='status' aria-live='polite'>
           <span className='history-loading-spinner' aria-hidden='true' />
+<<<<<<< HEAD
           <span>Loading your recharge history…</span>
         </div>
       ) : items.length ? (
@@ -4619,6 +5946,36 @@ function RechargeHistoryPage() {
                 { value: 'PENDING', label: 'In review' },
                 { value: 'APPROVED', label: 'Approved' },
                 { value: 'REJECTED', label: 'Rejected' },
+=======
+          <span>{t('Loading your recharge history…')}</span>
+        </div>
+      ) : items.length ? (
+        <>
+          <div className='recharge-history-summary' aria-label={t('Recharge status summary')}>
+            <div className='recharge-summary-card'>
+              <span>{t('Total requests')}</span>
+              <strong>{items.length}</strong>
+              <small>{t('All submitted recharges')}</small>
+            </div>
+            <div className='recharge-summary-card'>
+              <span>{t('Waiting for review')}</span>
+              <strong>{items.filter((item) => ['PENDING', 'UNDER_REVIEW'].includes(String(item.status).toUpperCase())).length}</strong>
+              <small>{t('Being processed by the team')}</small>
+            </div>
+            <div className='recharge-summary-card'>
+              <span>{t('Approved')}</span>
+              <strong>{items.filter((item) => String(item.status).toUpperCase() === 'APPROVED').length}</strong>
+              <small>{t('Added to your wallet')}</small>
+            </div>
+          </div>
+          <div className='recharge-history-tools'>
+            <div className='recharge-history-filters' role='group' aria-label={t('Filter recharge requests by status')}>
+              {[
+                { value: 'ALL', label: t('All requests') },
+                { value: 'PENDING', label: t('In review') },
+                { value: 'APPROVED', label: t('Approved') },
+                { value: 'REJECTED', label: t('Rejected') },
+>>>>>>> d1aaf18 (Update OnlineTrade project)
               ].map((filter) => {
                 const count = filter.value === 'ALL'
                   ? items.length
@@ -4643,7 +6000,11 @@ function RechargeHistoryPage() {
               })}
             </div>
             <span className='recharge-results-count'>
+<<<<<<< HEAD
               {filteredItems.length} shown
+=======
+              {filteredItems.length} {t('shown')}
+>>>>>>> d1aaf18 (Update OnlineTrade project)
             </span>
           </div>
           {filteredItems.length ? (
@@ -4651,10 +6012,17 @@ function RechargeHistoryPage() {
               <table>
                 <thead>
                   <tr>
+<<<<<<< HEAD
                     <th>Amount</th>
                     <th>Status</th>
                     <th>Proof</th>
                     <th>Date</th>
+=======
+                    <th>{t('Amount')}</th>
+                    <th>{t('Status')}</th>
+                    <th>{t('Proof')}</th>
+                    <th>{t('Date')}</th>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
                   </tr>
                 </thead>
                 <tbody>
@@ -4668,14 +6036,24 @@ function RechargeHistoryPage() {
                         <td><strong>{money(item.amount)}</strong></td>
                         <td>
                           <span className={`history-status ${status.toLowerCase().replace(/_/g, '-')}`}>
+<<<<<<< HEAD
                             {status.replaceAll('_', ' ')}
+=======
+                            {t(status.replaceAll('_', ' '))}
+>>>>>>> d1aaf18 (Update OnlineTrade project)
                           </span>
                         </td>
                         <td>
                           {hasProof ? (
+<<<<<<< HEAD
                             <span className='proof-badge verified'>✓ Proof attached</span>
                           ) : (
                             <span className='proof-badge missing'>Missing proof</span>
+=======
+                            <span className='proof-badge verified'>✓ {t('Proof attached')}</span>
+                          ) : (
+                            <span className='proof-badge missing'>{t('Missing proof')}</span>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
                           )}
                           {canUploadProof && (
                             <label className='inline-upload-btn'>
@@ -4686,7 +6064,11 @@ function RechargeHistoryPage() {
                                 onChange={(e) => handleUploadProof(item.id, e.target.files?.[0])}
                                 style={{ display: 'none' }}
                               />
+<<<<<<< HEAD
                               <span>{uploadingId === item.id ? 'Uploading…' : hasProof ? 'Change proof' : 'Upload proof'}</span>
+=======
+                              <span>{uploadingId === item.id ? t('Uploading…') : hasProof ? t('Change proof') : t('Upload proof')}</span>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
                             </label>
                           )}
                         </td>
@@ -4700,6 +6082,7 @@ function RechargeHistoryPage() {
           ) : (
             <div className='recharge-filter-empty'>
               <span aria-hidden='true'>✓</span>
+<<<<<<< HEAD
               <strong>No {statusFilter === 'PENDING' ? 'recharges in review' : statusFilter.toLowerCase() + ' recharges'} right now</strong>
               <p>Choose another filter to see more of your recharge history.</p>
               <button type='button' className='recharge-filter-reset' onClick={() => setStatusFilter('ALL')}>Show all requests</button>
@@ -4707,11 +6090,21 @@ function RechargeHistoryPage() {
           )}
         </>
       ) : <Empty>No recharge requests submitted yet.</Empty>}
+=======
+              <strong>{t(statusFilter === 'PENDING' ? 'No recharges in review right now' : `No ${statusFilter.toLowerCase()} recharges right now`)}</strong>
+              <p>{t('Choose another filter to see more of your recharge history.')}</p>
+              <button type='button' className='recharge-filter-reset' onClick={() => setStatusFilter('ALL')}>{t('Show all requests')}</button>
+            </div>
+          )}
+        </>
+      ) : <Empty>{t('No recharge requests submitted yet.')}</Empty>}
+>>>>>>> d1aaf18 (Update OnlineTrade project)
     </section>
   );
 }
 
 function Withdraw({ accounts, history, balance, settings, busy, onSubmit }) {
+  const { t } = useLanguage();
   const minimum = Number(settings?.minimumWithdrawalBalance ?? 70);
   const feePercent = Number(settings?.withdrawalFee ?? 10);
   const [amountInput, setAmountInput] = useState('');
@@ -4734,33 +6127,33 @@ function Withdraw({ accounts, history, balance, settings, busy, onSubmit }) {
     <>
       <div className='section-lead'>
         <div>
-          <p className='eyebrow'>PAYOUTS</p>
-          <h2>Withdraw funds</h2>
+          <p className='eyebrow'>{t('PAYOUTS')}</p>
+          <h2>{t('Withdraw funds')}</h2>
         </div>
-        <span className='balance-pill'>Available: {money(balance)}</span>
+        <span className='balance-pill'>{t('Available:')} {money(balance)}</span>
       </div>
 
       <div className='form-layout'>
         <div className='form-stack'>
           <form className='surface form-surface form-stack' onSubmit={onSubmit}>
-            <h3>Submit Withdrawal Request</h3>
+            <h3>{t('Submit Withdrawal Request')}</h3>
 
             <div className='withdrawal-info-banner'>
-              <div className='info-row'><span>Withdrawal Fee:</span><strong>{feePercent}%</strong></div>
-              <div className='info-row'><span>Processing Time:</span><strong>Within 1–8 hours</strong></div>
-              <div className='info-row'><span>Frequency Limit:</span><strong>1 withdrawal every 24 hours</strong></div>
-              <div className='info-row'><span>Minimum Withdrawal:</span><strong>{money(minimum)}</strong></div>
+              <div className='info-row'><span>{t('Withdrawal Fee:')}</span><strong>{feePercent}%</strong></div>
+              <div className='info-row'><span>{t('Processing Time:')}</span><strong>{t('Within 1–8 hours')}</strong></div>
+              <div className='info-row'><span>{t('Frequency Limit:')}</span><strong>{t('1 withdrawal every 24 hours')}</strong></div>
+              <div className='info-row'><span>{t('Minimum Withdrawal:')}</span><strong>{money(minimum)}</strong></div>
               {requestedAmount > 0 && (
                 <>
-                  <div className='info-row'><span>Estimated fee:</span><strong>{money(estimatedFee)}</strong></div>
-                  <div className='info-row'><span>You receive:</span><strong>{money(estimatedNet)}</strong></div>
+                  <div className='info-row'><span>{t('Estimated fee:')}</span><strong>{money(estimatedFee)}</strong></div>
+                  <div className='info-row'><span>{t('You receive:')}</span><strong>{money(estimatedNet)}</strong></div>
                 </>
               )}
             </div>
 
             {accounts.length ? (
               <div className='field'>
-                <span>Select Withdrawal Account</span>
+                <span>{t('Select Withdrawal Account')}</span>
                 <div className='account-selection-list'>
                   {accounts.map((account) => (
                     <label key={account.id} className={`account-select-card ${selectedAccountId === account.id ? 'active' : ''}`}>
@@ -4774,7 +6167,7 @@ function Withdraw({ accounts, history, balance, settings, busy, onSubmit }) {
                       <div className='account-card-body'>
                         <div className='account-card-header'>
                           <strong>{account.paymentProvider}</strong>
-                          {account.isDefault && <span className='default-badge'>DEFAULT</span>}
+                          {account.isDefault && <span className='default-badge'>{t('DEFAULT')}</span>}
                         </div>
                         <div className='account-card-name'>{account.accountHolderName}</div>
                         <div className='account-card-number'>{account.accountNumber}</div>
@@ -4785,40 +6178,45 @@ function Withdraw({ accounts, history, balance, settings, busy, onSubmit }) {
               </div>
             ) : (
               <div className='notice-box'>
+<<<<<<< HEAD
                 <p>You must add a verified withdrawal account before requesting a withdrawal.</p>
                 <Link className='primary-button' to='/profile'>Set up Personal Information ↗</Link>
+=======
+                <p>{t('You must add a verified withdrawal account before requesting a withdrawal.')}</p>
+                <Link className='primary-button' to='/profile'>{t('Set up Personal Information ↗')}</Link>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
               </div>
             )}
 
             <label className='field'>
-              <span>Withdrawal Amount (ETB)</span>
+              <span>{t('Withdrawal Amount (ETB)')}</span>
               <input
                 name='amount'
                 type='number'
                 min={minimum}
                 max={Number(balance ?? 0)}
                 step='0.01'
-                placeholder={`Minimum ${minimum} ETB`}
+                placeholder={`${t('Minimum')} ${minimum} ETB`}
                 value={amountInput}
                 onChange={(event) => setAmountInput(event.target.value)}
                 required
               />
-              <small>The fee is deducted from your requested amount. The remaining net amount is sent to your payout account.</small>
+              <small>{t('The fee is deducted from your requested amount. The remaining net amount is sent to your payout account.')}</small>
             </label>
 
             <label className='field'>
-              <span>Withdrawal Password</span>
+              <span>{t('Withdrawal Password')}</span>
               <input
                 name='withdrawalPassword'
                 type='password'
                 autoComplete='current-password'
-                placeholder='Enter your 6+ character withdrawal password'
+                placeholder={t('Enter your 6+ character withdrawal password')}
                 required
               />
             </label>
 
             <button className='primary-button large-btn' disabled={busy || !accounts.length}>
-              {busy ? 'Processing withdrawal…' : 'Submit Withdrawal Request'} <span>↗</span>
+              {busy ? t('Processing withdrawal…') : t('Submit Withdrawal Request')} <span>↗</span>
             </button>
           </form>
         </div>
@@ -4826,8 +6224,8 @@ function Withdraw({ accounts, history, balance, settings, busy, onSubmit }) {
         <section className='surface history-surface'>
           <div className='surface-heading'>
             <div>
-              <p className='eyebrow'>RECENT</p>
-              <h3>Withdrawal history</h3>
+              <p className='eyebrow'>{t('RECENT')}</p>
+              <h3>{t('Withdrawal history')}</h3>
             </div>
           </div>
           <History rows={history} />
@@ -4838,6 +6236,7 @@ function Withdraw({ accounts, history, balance, settings, busy, onSubmit }) {
 }
 
 function WithdrawalAccountPage({ accounts, methods, support, busy, onSaveAccount }) {
+  const { t } = useLanguage();
   const [withdrawalPasswordSet, setWithdrawalPasswordSet] = useState(true);
   const [providerId, setProviderId] = useState('');
   const [accountNumber, setAccountNumber] = useState('');
@@ -4854,40 +6253,40 @@ function WithdrawalAccountPage({ accounts, methods, support, busy, onSaveAccount
 
   const selectedProvider = methods.find((method) => method.id === providerId)?.name ?? '';
   const isTelebirr = selectedProvider === 'Telebirr';
-  const accountLabel = isTelebirr ? 'Phone Number' : 'Account Number';
+  const accountLabel = isTelebirr ? t('Phone Number') : t('Account Number');
 
   useEffect(() => {
     switch (selectedProvider) {
       case 'Awash Bank':
-        setValidationHint('Must be 14 or 15 digits (e.g. 013201013577300)');
+        setValidationHint(t('Must be 14 or 15 digits (e.g. 013201013577300)'));
         break;
       case 'CBE':
-        setValidationHint('Must be exactly 13 digits (e.g. 1000419637649)');
+        setValidationHint(t('Must be exactly 13 digits (e.g. 1000419637649)'));
         break;
       case 'Telebirr':
-        setValidationHint('Must be exactly 10 digits (e.g. 0929688828)');
+        setValidationHint(t('Must be exactly 10 digits (e.g. 0929688828)'));
         break;
       case 'Abyssinia Bank':
-        setValidationHint('Must be 6 to 9 digits (e.g. 221759389)');
+        setValidationHint(t('Must be 6 to 9 digits (e.g. 221759389)'));
         break;
       default:
-        setValidationHint('Enter valid digits without spaces or special characters');
+        setValidationHint(t('Enter valid digits without spaces or special characters'));
     }
-  }, [selectedProvider]);
+  }, [selectedProvider, t]);
 
   return (
     <section className='surface form-surface form-stack'>
       <div className='surface-heading'>
         <div>
-          <p className='eyebrow'>PAYOUT CONFIGURATION</p>
-          <h2>Withdrawal Account</h2>
+          <p className='eyebrow'>{t('PAYOUT CONFIGURATION')}</p>
+          <h2>{t('Withdrawal Account')}</h2>
         </div>
       </div>
 
       {accounts.length ? (
         <div className='saved-accounts-view'>
           <p className='form-subtitle'>
-            Your linked withdrawal destination is saved below. To protect your funds against unauthorized changes, withdrawal accounts are locked once added.
+            {t('Your linked withdrawal destination is saved below. To protect your funds against unauthorized changes, withdrawal accounts are locked once added.')}
           </p>
 
           <div className='saved-accounts-grid'>
@@ -4895,11 +6294,11 @@ function WithdrawalAccountPage({ accounts, methods, support, busy, onSaveAccount
               <div className='saved-account-card' key={account.id}>
                 <div className='account-badge-row'>
                   <span className='provider-tag'>{account.paymentProvider}</span>
-                  <span className='status-pill active'>ACTIVE</span>
+                  <span className='status-pill active'>{t('ACTIVE')}</span>
                 </div>
                 <div className='account-holder-name'>{account.accountHolderName}</div>
                 <div className='account-number-masked'>{account.accountNumber}</div>
-                <div className='account-date'>Added {new Date(account.createdAt).toLocaleDateString()}</div>
+                <div className='account-date'>{t('Added')} {new Date(account.createdAt).toLocaleDateString()}</div>
               </div>
             ))}
           </div>
@@ -4907,31 +6306,31 @@ function WithdrawalAccountPage({ accounts, methods, support, busy, onSaveAccount
           <div className='immutable-account-notice'>
             <div className='notice-icon'>🔒</div>
             <div>
-              <strong>Need to update or change your bank account?</strong>
-              <p>For your security, accounts cannot be edited directly from the app. Please contact official customer support with your verification details.</p>
+              <strong>{t('Need to update or change your bank account?')}</strong>
+              <p>{t('For your security, accounts cannot be edited directly from the app. Please contact official customer support with your verification details.')}</p>
               <a
                 className='secondary-button'
                 href={supportUrl}
                 target={supportUrl.startsWith('http') ? '_blank' : undefined}
                 rel='noreferrer'
               >
-                Contact Customer Support to Change Account ↗
+                {t('Contact Customer Support to Change Account ↗')}
               </a>
             </div>
           </div>
         </div>
       ) : (
         <>
-          <h3>Add Withdrawal Account</h3>
+          <h3>{t('Add Withdrawal Account')}</h3>
           <p className='form-subtitle'>
-            Link your verified Ethiopian bank or mobile money account. One account may be registered per customer.
+            {t('Link your verified Ethiopian bank or mobile money account. One account may be registered per customer.')}
           </p>
 
           <form className='form-stack' onSubmit={onSaveAccount}>
             <label className='field'>
-              <span>Payment Provider *</span>
+              <span>{t('Payment Provider *')}</span>
               <select name='paymentMethodId' value={providerId} onChange={(event) => setProviderId(event.target.value)} required>
-                <option value='' disabled>Select your bank or mobile provider</option>
+                <option value='' disabled>{t('Select your bank or mobile provider')}</option>
                 {methods.filter((method) => ['Awash Bank', 'CBE', 'Telebirr', 'Abyssinia Bank'].includes(method.name)).map((method) => (
                   <option key={method.id} value={method.id}>{method.name}</option>
                 ))}
@@ -4939,12 +6338,12 @@ function WithdrawalAccountPage({ accounts, methods, support, busy, onSaveAccount
             </label>
 
             <label className='field'>
-              <span>Account Holder Full Name *</span>
+              <span>{t('Account Holder Full Name *')}</span>
               <input
                 name='accountHolderName'
                 value={holderName}
                 onChange={(e) => setHolderName(e.target.value)}
-                placeholder='Full legal name as shown on bank/telebirr account'
+                placeholder={t('Full legal name as shown on bank/telebirr account')}
                 autoComplete='name'
                 required
               />
@@ -4953,24 +6352,24 @@ function WithdrawalAccountPage({ accounts, methods, support, busy, onSaveAccount
             {!withdrawalPasswordSet && (
               <div className='field-grid'>
                 <label className='field'>
-                  <span>Create Withdrawal Password * (min 6 chars)</span>
+                  <span>{t('Create Withdrawal Password * (min 6 chars)')}</span>
                   <input
                     name='newWithdrawalPassword'
                     type='password'
                     minLength={6}
-                    placeholder='Create secure password'
+                    placeholder={t('Create secure password')}
                     autoComplete='new-password'
                     required
                   />
-                  <small>Required to authorize future cash payouts.</small>
+                  <small>{t('Required to authorize future cash payouts.')}</small>
                 </label>
                 <label className='field'>
-                  <span>Confirm Withdrawal Password *</span>
+                  <span>{t('Confirm Withdrawal Password *')}</span>
                   <input
                     name='confirmNewWithdrawalPassword'
                     type='password'
                     minLength={6}
-                    placeholder='Repeat withdrawal password'
+                    placeholder={t('Repeat withdrawal password')}
                     autoComplete='new-password'
                     required
                   />
@@ -4994,7 +6393,7 @@ function WithdrawalAccountPage({ accounts, methods, support, busy, onSaveAccount
 
             <div className='button-row' style={{ marginTop: '12px' }}>
               <button className='primary-button large-btn' disabled={busy || !providerId}>
-                {busy ? 'Saving account…' : 'Save Withdrawal Account'} <span>↗</span>
+                {busy ? t('Saving account…') : t('Save Withdrawal Account')} <span>↗</span>
               </button>
             </div>
           </form>
@@ -5005,21 +6404,26 @@ function WithdrawalAccountPage({ accounts, methods, support, busy, onSaveAccount
 }
 
 function WithdrawHistoryPage() {
+  const { t } = useLanguage();
   const [items, setItems] = useState([]);
   useEffect(() => { api('/withdrawals').then(setItems).catch(() => setItems([])); }, []);
   return (
     <section className='surface table-surface'>
       <div className='surface-heading'>
         <div>
-          <p className='eyebrow'>WITHDRAWAL HISTORY</p>
-          <h3>Requested payouts</h3>
+          <p className='eyebrow'>{t('WITHDRAWAL HISTORY')}</p>
+          <h3>{t('Requested payouts')}</h3>
         </div>
       </div>
       {items.length ? (
         <div className='table-wrap'>
           <table>
             <thead>
+<<<<<<< HEAD
               <tr><th>Amount</th><th>Status</th><th>Requested</th></tr>
+=======
+              <tr><th>{t('Amount')}</th><th>{t('Status')}</th><th>{t('Requested')}</th></tr>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
             </thead>
             <tbody>
               {items.map((item) => (
@@ -5027,7 +6431,11 @@ function WithdrawHistoryPage() {
                   <td>{money(item.amount)}</td>
                   <td>
                     <span className={`history-status ${String(item.status).toLowerCase().replace(/_/g, '-')}`}>
+<<<<<<< HEAD
                       {String(item.status).replaceAll('_', ' ')}
+=======
+                      {t(String(item.status).replaceAll('_', ' '))}
+>>>>>>> d1aaf18 (Update OnlineTrade project)
                     </span>
                   </td>
                   <td>{new Date(item.createdAt).toLocaleDateString()}</td>
@@ -5036,44 +6444,136 @@ function WithdrawHistoryPage() {
             </tbody>
           </table>
         </div>
-      ) : <Empty>No withdrawals yet.</Empty>}
+      ) : <Empty>{t('No withdrawals yet.')}</Empty>}
     </section>
   );
 }
 
 function TransactionsPage() {
+  const { t } = useLanguage();
   const [items, setItems] = useState({ items: [], pagination: { total: 0 } });
+  const [selectedTab, setSelectedTab] = useState('DEPOSIT');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const navigate = useNavigate();
+
   useEffect(() => {
-    api('/transactions?page=1&limit=25').then(setItems).catch(() => setItems({ items: [], pagination: { total: 0 } }));
+    let active = true;
+    api('/transactions?page=1&limit=100')
+      .then((result) => {
+        if (active) setItems(result);
+      })
+      .catch((cause) => {
+        if (active) setError(cause.message || 'Unable to load transaction history.');
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
+    };
   }, []);
+
+  const filteredItems = (items.items ?? []).filter((item) => {
+    const type = String(item.type ?? '').toUpperCase();
+    const referenceType = String(item.referenceType ?? '').toLowerCase();
+    return selectedTab === 'DEPOSIT'
+      ? type === 'DEPOSIT' || referenceType === 'recharge'
+      : type === 'WITHDRAWAL' || referenceType.includes('withdraw');
+  });
+
+  const statusLabel = (status) => String(status ?? 'PENDING')
+    .toLowerCase()
+    .replaceAll('_', ' ')
+    .replace(/\b\w/g, (letter) => letter.toUpperCase());
+
+  const formatTransactionDate = (value) => {
+    const date = new Date(value);
+    if (Number.isNaN(date.getTime())) return t('Date unavailable');
+    const day = date.toLocaleDateString('en-GB').replaceAll('/', '-');
+    const time = date.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+    return `${day} ${time}`;
+  };
+
   return (
-    <section className='surface table-surface'>
-      <div className='surface-heading'>
-        <div>
-          <p className='eyebrow'>TRANSACTIONS</p>
-          <h3>All wallet activity</h3>
-        </div>
+    <section className='transactions-page'>
+      <header className='transactions-page-header'>
+        <button className='transactions-back-button' type='button' onClick={() => navigate('/my')} aria-label='Back to My page'>
+          <ChevronLeft size={20} />
+        </button>
+        <h1>{t('Transaction History')}</h1>
+        <LanguageSwitcher />
+      </header>
+      <div className='transactions-tabs' role='tablist' aria-label={t('Transaction type')}>
+        {['DEPOSIT', 'WITHDRAW'].map((tab) => (
+          <button
+            key={tab}
+            type='button'
+            role='tab'
+            aria-selected={selectedTab === tab}
+            className={selectedTab === tab ? 'active' : ''}
+            onClick={() => setSelectedTab(tab)}
+          >
+            {tab === 'DEPOSIT' ? t('Deposit') : t('Withdraw')}
+          </button>
+        ))}
       </div>
-      {items.items?.length ? (
-        <div className='table-wrap'>
-          <table>
-            <thead>
-              <tr><th>Type</th><th>Amount</th><th>Status</th><th>Date</th></tr>
-            </thead>
-            <tbody>
-              {items.items.map((item) => <tr key={item.id}><td>{item.type}</td><td>{money(item.amount)}</td><td>{item.status}</td><td>{new Date(item.createdAt).toLocaleDateString()}</td></tr>)}
-            </tbody>
-          </table>
+      <section className='transactions-activity-card'>
+        <div className='transactions-activity-heading'>
+          <h2>{t('ACTIVITY LOG')}</h2>
+          <span>{filteredItems.length} {filteredItems.length === 1 ? t('item') : t('items')}</span>
         </div>
-      ) : <Empty>No transactions yet.</Empty>}
+        {error && <div className='transactions-error' role='alert'>{error}</div>}
+        {loading ? <p className='transactions-empty'>{t('Loading activity…')}</p> : filteredItems.length ? (
+          <div className='transactions-activity-list'>
+            {filteredItems.map((item) => (
+              <article className='transactions-activity-item' key={item.id}>
+                <span className={`transactions-type-icon ${selectedTab === 'DEPOSIT' ? 'deposit' : 'withdraw'}`} aria-hidden='true'>
+                  {selectedTab === 'DEPOSIT' ? <ArrowUpFromLine size={18} /> : <ArrowDownToLine size={18} />}
+                </span>
+                <div className='transactions-item-details'>
+                  <strong>{selectedTab === 'DEPOSIT' ? t('Deposit') : t('Withdraw')}</strong>
+                  <time dateTime={item.createdAt}>{formatTransactionDate(item.createdAt)}</time>
+                  <b className={String(item.direction).toUpperCase() === 'CREDIT' ? 'deposit-amount' : 'withdraw-amount'}>
+                    {String(item.direction).toUpperCase() === 'CREDIT' ? '+' : '−'}{money(item.amount)}
+                  </b>
+                  <span className={`transactions-status ${String(item.status ?? '').toLowerCase().replaceAll('_', '-')}`}>
+                    <i aria-hidden='true' />{statusLabel(item.status)}
+                  </span>
+                </div>
+              </article>
+            ))}
+          </div>
+        ) : (
+          <p className='transactions-empty'>{selectedTab === 'DEPOSIT' ? t('No deposits yet.') : t('No withdrawals yet.')}</p>
+        )}
+      </section>
     </section>
   );
 }
 
 function NotificationsPage({ onMarkRead }) {
+<<<<<<< HEAD
+=======
+  const { t } = useLanguage();
+>>>>>>> d1aaf18 (Update OnlineTrade project)
   const [items, setItems] = useState({ items: [], pagination: { total: 0 } });
+  const [error, setError] = useState('');
   useEffect(() => {
-    api('/notifications?page=1&limit=25').then(setItems).catch(() => setItems({ items: [], pagination: { total: 0 } }));
+    let active = true;
+    api('/notifications?page=1&limit=25')
+      .then((result) => {
+        if (active) {
+          setItems(result);
+          setError('');
+        }
+      })
+      .catch((cause) => {
+        if (active) setError(cause.message);
+      });
+    return () => {
+      active = false;
+    };
   }, []);
 
   async function markRead(id) {
@@ -5089,10 +6589,11 @@ function NotificationsPage({ onMarkRead }) {
     <section className='surface table-surface'>
       <div className='surface-heading'>
         <div>
-          <p className='eyebrow'>NOTIFICATIONS</p>
-          <h3>Recent messages</h3>
+          <p className='eyebrow'>{t('NOTIFICATIONS')}</p>
+          <h3>{t('Recent messages')}</h3>
         </div>
       </div>
+      {error && <ErrorToast message={error} onDismiss={() => setError('')} />}
       {items.items.length ? (
         <div className='history-list'>
           {items.items.map((item) => (
@@ -5102,18 +6603,22 @@ function NotificationsPage({ onMarkRead }) {
                 <small>{item.message}</small>
               </div>
               <div>
-                <span className={`history-status ${item.isRead ? 'completed' : 'pending'}`}>{item.isRead ? 'Read' : 'Unread'}</span>
-                {!item.isRead && <button type='button' className='secondary-button small' onClick={() => markRead(item.id)}>Mark read</button>}
+                <span className={`history-status ${item.isRead ? 'completed' : 'pending'}`}>{item.isRead ? t('Read') : t('Unread')}</span>
+                {!item.isRead && <button type='button' className='secondary-button small' onClick={() => markRead(item.id)}>{t('Mark read')}</button>}
               </div>
             </div>
           ))}
         </div>
-      ) : <Empty>You have no notifications yet.</Empty>}
+      ) : <Empty>{t('You have no notifications yet.')}</Empty>}
     </section>
   );
 }
 
 function MyPage({ support = {}, dashboard, onCurrentVipChange, onSignOut }) {
+<<<<<<< HEAD
+=======
+  const { t } = useLanguage();
+>>>>>>> d1aaf18 (Update OnlineTrade project)
   const [error, setError] = useState('');
 
   useEffect(() => {
@@ -5127,7 +6632,11 @@ function MyPage({ support = {}, dashboard, onCurrentVipChange, onSignOut }) {
       })
       .catch((cause) => {
         if (active) {
+<<<<<<< HEAD
           setError(cause.message || 'Unable to load your current VIP level.');
+=======
+          setError(t(cause.message || 'Unable to load your current VIP level.'));
+>>>>>>> d1aaf18 (Update OnlineTrade project)
           onCurrentVipChange({ loading: false, purchase: null });
         }
       });
@@ -5140,16 +6649,28 @@ function MyPage({ support = {}, dashboard, onCurrentVipChange, onSignOut }) {
     ? support.customerSupportUrl
     : '/support';
   const activityDestinations = [
+<<<<<<< HEAD
     { to: '/profile', label: 'Personal Information', icon: UserCircle },
     { to: '/transactions', label: 'Transactions', icon: Wallet },
     { to: '/recharge/history', label: 'Recharge History', icon: FileText },
     { to: '/rewards', label: 'Rewards', icon: Gift },
     { to: '/tasks', label: 'Daily Tasks', icon: CheckCircle2 },
+=======
+    { to: '/profile', label: t('Personal Information'), icon: UserCircle },
+    { to: '/transactions', label: t('Transactions'), icon: Wallet },
+    { to: '/recharge/history', label: t('Recharge History'), icon: FileText },
+    { to: '/rewards', label: t('Rewards'), icon: Gift },
+    { to: '/tasks', label: t('Daily Tasks'), icon: CheckCircle2 },
+>>>>>>> d1aaf18 (Update OnlineTrade project)
   ];
   const resourceDestinations = [
     { to: supportDestination, label: support.customerSupportLabel || 'Customer Support', icon: ShieldCheck, external: Boolean(support.customerSupportEnabled && support.customerSupportUrl) },
     { to: support.officialGroupEnabled ? (support.officialGroupUrl || '/support') : '/support', label: support.officialGroupLabel || 'Official Group', icon: Users, external: Boolean(support.officialGroupEnabled && support.officialGroupUrl) },
+<<<<<<< HEAD
     { to: support.appDownloadUrl?.startsWith('http') ? support.appDownloadUrl : '/download', label: 'Download App', icon: ArrowDownToLine, external: Boolean(support.appDownloadUrl?.startsWith('http')) },
+=======
+    { to: support.appDownloadUrl?.startsWith('http') ? support.appDownloadUrl : '/download', label: t('Download App'), icon: ArrowDownToLine, external: Boolean(support.appDownloadUrl?.startsWith('http')) },
+>>>>>>> d1aaf18 (Update OnlineTrade project)
   ];
 
   const renderDestinationLinks = (destinations) => destinations.map(({ to, label, icon: Icon, external }) => {
@@ -5172,36 +6693,63 @@ function MyPage({ support = {}, dashboard, onCurrentVipChange, onSignOut }) {
       {error && <ErrorToast message={error} onDismiss={() => setError('')} />}
       <section className='my-wallet-actions' aria-label='Wallet balance and actions'>
         <div className='my-wallet-balance'>
+<<<<<<< HEAD
           <span>Available balance</span>
           <strong>{money(dashboard?.wallet?.availableBalance)}</strong>
         </div>
         <div className='my-wallet-action-buttons'>
           <Link className='secondary-button' to='/withdraw'>Withdraw</Link>
           <Link className='primary-button' to='/recharge'>Recharge</Link>
+=======
+          <span>{t('Available balance')}</span>
+          <strong>{money(dashboard?.wallet?.availableBalance)}</strong>
+        </div>
+        <div className='my-wallet-action-buttons'>
+          <Link className='secondary-button' to='/withdraw'>{t('Withdraw')}</Link>
+          <Link className='primary-button' to='/recharge'>{t('Recharge')}</Link>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
         </div>
       </section>
       <section className='my-page-link-group' aria-label='Account activity'>
         <div className='my-page-group-heading'>
+<<<<<<< HEAD
           <h3>Account activity</h3>
           <p>Manage your details, wallet activity, and member benefits.</p>
+=======
+          <h3>{t('Account activity')}</h3>
+          <p>{t('Manage your details, wallet activity, and member benefits.')}</p>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
         </div>
         <div className='my-page-links'>{renderDestinationLinks(activityDestinations)}</div>
       </section>
       <section className='my-page-link-group' aria-label='Help and resources'>
         <div className='my-page-group-heading'>
+<<<<<<< HEAD
           <h3>Help &amp; resources</h3>
           <p>Get support and access MKM resources.</p>
+=======
+          <h3>{t('Help & resources')}</h3>
+          <p>{t('Get support and access Online Trade resources.')}</p>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
         </div>
         <div className='my-page-links'>{renderDestinationLinks(resourceDestinations)}</div>
       </section>
       <button className='my-page-logout-button' type='button' onClick={onSignOut}>
+<<<<<<< HEAD
         <LogOut size={17} /> Log out
+=======
+        <LogOut size={17} /> {t('Log out')}
+>>>>>>> d1aaf18 (Update OnlineTrade project)
       </button>
     </section>
   );
 }
 
 function ProfilePage({ methods = [], support = {}, busy = false, onSaveAccount }) {
+<<<<<<< HEAD
+=======
+  const { t } = useLanguage();
+>>>>>>> d1aaf18 (Update OnlineTrade project)
   const [profile, setProfile] = useState(null);
   const [accounts, setAccounts] = useState([]);
   const [fullName, setFullName] = useState('');
@@ -5229,7 +6777,7 @@ function ProfilePage({ methods = [], support = {}, busy = false, onSaveAccount }
     try {
       const trimmed = fullName.trim();
       if (trimmed.length < 2) {
-        throw new Error('Full name must be at least 2 characters long.');
+        throw new Error(t('Full name must be at least 2 characters long.'));
       }
 
       const updated = await api('/profile', {
@@ -5238,7 +6786,7 @@ function ProfilePage({ methods = [], support = {}, busy = false, onSaveAccount }
       });
       setProfile(updated);
       setFullName(updated.fullName ?? '');
-      setNotice('Profile updated successfully.');
+      setNotice(t('Profile updated successfully.'));
     } catch (cause) {
       setError(cause.message);
     } finally {
@@ -5248,8 +6796,13 @@ function ProfilePage({ methods = [], support = {}, busy = false, onSaveAccount }
 
   return (
     <section className='surface form-surface form-stack'>
+<<<<<<< HEAD
       <p className='eyebrow'>PERSONAL INFORMATION</p>
       <h2>Account details</h2>
+=======
+      <p className='eyebrow'>{t('PERSONAL INFORMATION')}</p>
+      <h2>{t('Account details')}</h2>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
       {error && <ErrorToast message={error} onDismiss={() => setError('')} />}
       {notice && <SuccessToast message={notice} onDismiss={() => setNotice('')} />}
       {profile ? (
@@ -5257,62 +6810,75 @@ function ProfilePage({ methods = [], support = {}, busy = false, onSaveAccount }
           <form className='form-stack' onSubmit={saveProfile}>
             <div className='profile-form-grid'>
               <label className='field'>
-                <span>Full Name</span>
+                <span>{t('Full Name')}</span>
                 <input type='text' value={fullName} onChange={(event) => setFullName(event.target.value)} required />
               </label>
               <label className='field'>
-                <span>Phone</span>
+                <span>{t('Phone')}</span>
                 <input type='tel' value={profile.phoneNumber ?? ''} disabled />
               </label>
             </div>
             <div className='profile-form-grid'>
               <label className='field'>
-                <span>Referral Code</span>
+                <span>{t('Referral Code')}</span>
                 <input type='text' value={profile.referralCode ?? ''} disabled />
               </label>
               <label className='field'>
-                <span>Referral Link</span>
+                <span>{t('Referral Link')}</span>
                 <input type='text' value={profile.referralLink ?? (profile.referralCode ? `${window.location.origin}/register?ref=${profile.referralCode}` : '')} disabled />
               </label>
             </div>
             <div className='profile-form-grid'>
               <label className='field'>
-                <span>Sponsor / Referrer</span>
-                <input type='text' value={profile.sponsorName ?? 'Not available'} disabled />
+                <span>{t('Sponsor / Referrer')}</span>
+                <input type='text' value={t(profile.sponsorName ?? 'Not available')} disabled />
               </label>
               <label className='field'>
-                <span>Account Status</span>
-                <input type='text' value={profile.status ?? 'ACTIVE'} disabled />
+                <span>{t('Account Status')}</span>
+                <input type='text' value={t(profile.status ?? 'ACTIVE')} disabled />
               </label>
             </div>
             <div className='profile-form-grid'>
               <label className='field'>
-                <span>Registration Date</span>
+                <span>{t('Registration Date')}</span>
                 <input type='text' value={profile.registeredAt ? new Date(profile.registeredAt).toLocaleDateString() : '—'} disabled />
               </label>
               <div className='field'>
+<<<<<<< HEAD
                 <span>Profile Actions</span>
                 <button className='primary-button' type='submit' disabled={saveBusy}>{saveBusy ? 'Saving…' : 'Save changes'}<span>↗</span></button>
+=======
+                <span>{t('Profile Actions')}</span>
+                <button className='primary-button' type='submit' disabled={saveBusy}>{saveBusy ? t('Saving…') : t('Save changes')}<span>↗</span></button>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
               </div>
             </div>
           </form>
 
           <WithdrawalAccountPage accounts={accounts} methods={methods} support={support} busy={busy} onSaveAccount={onSaveAccount} />
         </>
-      ) : <Empty>Profile information is unavailable.</Empty>}
+      ) : <Empty>{t('Profile information is unavailable.')}</Empty>}
     </section>
   );
 }
 
+<<<<<<< HEAD
 function formatUnlockTime(eligibleAt) {
   if (!eligibleAt) return 'Upcoming';
   const diffMs = new Date(eligibleAt) - new Date();
   if (diffMs <= 0) return 'Ready';
+=======
+function formatUnlockTime(eligibleAt, t) {
+  if (!eligibleAt) return t('Upcoming');
+  const diffMs = new Date(eligibleAt) - new Date();
+  if (diffMs <= 0) return t('Ready');
+>>>>>>> d1aaf18 (Update OnlineTrade project)
   const totalMinutes = Math.floor(diffMs / (1000 * 60));
   const hours = Math.floor(totalMinutes / 60);
   const minutes = totalMinutes % 60;
   if (hours >= 24) {
     const days = Math.floor(hours / 24);
+<<<<<<< HEAD
     return `In ${days}d ${hours % 24}h`;
   }
   if (hours > 0) {
@@ -5322,6 +6888,18 @@ function formatUnlockTime(eligibleAt) {
 }
 
 function TasksPage({ onRefreshDashboard }) {
+=======
+    return `${days}${t('d')} ${hours % 24}${t('h')}`;
+  }
+  if (hours > 0) {
+    return `${hours}${t('h')} ${minutes}${t('m')}`;
+  }
+  return `${minutes}${t('m')}`;
+}
+
+function TasksPage({ onRefreshDashboard }) {
+  const { t, language } = useLanguage();
+>>>>>>> d1aaf18 (Update OnlineTrade project)
   const [tasks, setTasks] = useState({ items: [], summary: {} });
   const [loading, setLoading] = useState(true);
   const [pageError, setPageError] = useState('');
@@ -5388,13 +6966,22 @@ function TasksPage({ onRefreshDashboard }) {
       <section className='surface table-surface'>
         <div className='surface-heading'>
           <div>
+<<<<<<< HEAD
             <p className='eyebrow'>DAILY TASKS</p>
             <h3>VIP Activity Progress</h3>
+=======
+            <p className='eyebrow'>{t('DAILY TASKS')}</p>
+            <h3>{t('VIP Activity Progress')}</h3>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
           </div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flexWrap: 'wrap' }}>
             {tasks.summary?.completedCount > 0 && (
               <p style={{ margin: 0, fontSize: '0.85rem', fontWeight: 700, color: '#059669' }}>
+<<<<<<< HEAD
                 ✓ {tasks.summary.completedCount} completed of {tasks.items?.length || tasks.summary.totalTasks} total
+=======
+                ✓ {tasks.summary.completedCount} {t('completed of')} {tasks.items?.length || tasks.summary.totalTasks} {t('total')}
+>>>>>>> d1aaf18 (Update OnlineTrade project)
               </p>
             )}
             <button
@@ -5402,9 +6989,15 @@ function TasksPage({ onRefreshDashboard }) {
               className='secondary-button'
               style={{ padding: '5px 12px', fontSize: '0.75rem', fontWeight: 700 }}
               onClick={() => setSortOrder((prev) => (prev === 'asc' ? 'desc' : 'asc'))}
+<<<<<<< HEAD
               title='Toggle chronological sort order'
             >
               {sortOrder === 'asc' ? 'Oldest first' : 'Newest first'}
+=======
+              title={t('Toggle chronological sort order')}
+            >
+              {sortOrder === 'asc' ? t('Oldest first') : t('Newest first')}
+>>>>>>> d1aaf18 (Update OnlineTrade project)
             </button>
           </div>
         </div>
@@ -5417,7 +7010,11 @@ function TasksPage({ onRefreshDashboard }) {
               style={{ padding: '6px 14px', fontSize: '0.85rem', fontWeight: 700 }}
               onClick={() => setSelectedProduct('ALL')}
             >
+<<<<<<< HEAD
               All VIPs ({productGroups.length})
+=======
+              {t('All VIPs')} ({productGroups.length})
+>>>>>>> d1aaf18 (Update OnlineTrade project)
             </button>
             {productGroups.map((group) => (
               <button
@@ -5427,7 +7024,11 @@ function TasksPage({ onRefreshDashboard }) {
                 style={{ padding: '6px 14px', fontSize: '0.85rem', fontWeight: 700 }}
                 onClick={() => setSelectedProduct(group.key)}
               >
+<<<<<<< HEAD
                 {group.productName} ({group.totalDays} Days)
+=======
+                {group.productName} ({group.totalDays} {t('Days')})
+>>>>>>> d1aaf18 (Update OnlineTrade project)
               </button>
             ))}
           </div>
@@ -5437,12 +7038,17 @@ function TasksPage({ onRefreshDashboard }) {
       </section>
 
       {loading ? (
+<<<<<<< HEAD
         <section className='surface table-surface'><p className='empty-state' role='status'>Loading tasks…</p></section>
+=======
+        <section className='surface table-surface'><p className='empty-state' role='status'>{t('Loading tasks…')}</p></section>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
       ) : activeGroups.length ? (
         activeGroups.map((group) => (
           <section key={group.key} className='surface table-surface'>
             <div className='surface-heading' style={{ borderBottom: '1px solid #e5e7eb', paddingBottom: '12px', marginBottom: '16px' }}>
               <div>
+<<<<<<< HEAD
                 <p className='eyebrow' style={{ color: '#059669', fontWeight: 700 }}>INDIVIDUAL VIP PLAN</p>
                 <h3 style={{ margin: 0 }}>{group.productName} — 30 Days Tasks</h3>
               </div>
@@ -5452,6 +7058,17 @@ function TasksPage({ onRefreshDashboard }) {
                 </p>
                 <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#4b5563', fontWeight: 600 }}>
                   {group.completedCount} of {group.totalDays} credited
+=======
+                <p className='eyebrow' style={{ color: '#059669', fontWeight: 700 }}>{t('INDIVIDUAL VIP PLAN')}</p>
+                <h3 style={{ margin: 0 }}>{group.productName} — 30 {t('Days Tasks')}</h3>
+              </div>
+              <div style={{ textAlign: 'right' }}>
+                <p style={{ margin: 0, fontSize: '0.9rem', fontWeight: 700, color: '#111827' }}>
+                  {t('Daily Reward:')} {money(group.dailyEarnings)}
+                </p>
+                <p style={{ margin: '4px 0 0', fontSize: '0.8rem', color: '#4b5563', fontWeight: 600 }}>
+                  {group.completedCount} {t('of')} {group.totalDays} {t('credited')}
+>>>>>>> d1aaf18 (Update OnlineTrade project)
                 </p>
               </div>
             </div>
@@ -5460,9 +7077,15 @@ function TasksPage({ onRefreshDashboard }) {
               <table>
                 <thead>
                   <tr>
+<<<<<<< HEAD
                     <th>Business date</th>
                     <th>Daily earnings</th>
                     <th>Wallet credit</th>
+=======
+                    <th>{t('Business date')}</th>
+                    <th>{t('Daily earnings')}</th>
+                    <th>{t('Wallet credit')}</th>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
                   </tr>
                 </thead>
                 <tbody>
@@ -5470,6 +7093,7 @@ function TasksPage({ onRefreshDashboard }) {
                     const eligible = item.eligibleAt ? new Date(item.eligibleAt) <= new Date() : false;
                     return (
                       <tr key={item.id}>
+<<<<<<< HEAD
                         <td><strong>{new Date(item.businessDate).toLocaleDateString()}</strong></td>
                         <td><strong>{money(item.calculatedAmount)}</strong></td>
                         <td>
@@ -5484,6 +7108,22 @@ function TasksPage({ onRefreshDashboard }) {
                             </strong>
                           ) : item.status === 'NOT_ELIGIBLE' ? (
                             <strong style={{ fontSize: '0.85rem', fontWeight: 700, color: '#9ca3af' }}>Expired</strong>
+=======
+                        <td><strong>{new Date(item.businessDate).toLocaleDateString(language === 'am' ? 'am-ET' : 'en-GB')}</strong></td>
+                        <td><strong>{money(item.calculatedAmount)}</strong></td>
+                        <td>
+                          {item.status === 'COMPLETED' ? (
+                            <strong style={{ color: '#16a34a', fontWeight: 700, fontSize: '0.85rem' }}>✓ {t('Added to wallet')}</strong>
+                          ) : item.status === 'WAITING' ? (
+                            <strong
+                              style={{ fontSize: '0.85rem', fontWeight: 700, color: '#111827', display: 'inline-flex', alignItems: 'center', gap: '5px' }}
+                              title={`${t('Unlocks at')} ${new Date(item.eligibleAt).toLocaleString(language === 'am' ? 'am-ET' : 'en-GB')}`}
+                            >
+                              {eligible ? t('Automatic credit processing') : `${t('Available in')} ${formatUnlockTime(item.eligibleAt, t)}`}
+                            </strong>
+                          ) : item.status === 'NOT_ELIGIBLE' ? (
+                            <strong style={{ fontSize: '0.85rem', fontWeight: 700, color: '#9ca3af' }}>{t('Expired')}</strong>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
                           ) : null}
                         </td>
                       </tr>
@@ -5495,13 +7135,18 @@ function TasksPage({ onRefreshDashboard }) {
           </section>
         ))
       ) : (
+<<<<<<< HEAD
         <section className='surface table-surface'><Empty>No daily tasks yet.</Empty></section>
+=======
+        <section className='surface table-surface'><Empty>{t('No daily tasks yet.')}</Empty></section>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
       )}
     </div>
   );
 }
 
 function RewardsPage({ onCustomerSuccess }) {
+  const { t } = useLanguage();
   const [rewards, setRewards] = useState({ items: [], summary: {} });
   const [error, setError] = useState('');
   const [busyId, setBusyId] = useState('');
@@ -5524,7 +7169,7 @@ function RewardsPage({ onCustomerSuccess }) {
     try {
       await api(`/rewards/${reward.id}/claim`, { method: 'POST', ...jsonBody({}) });
       await refresh();
-      onCustomerSuccess?.('Reward claim submitted. It is waiting for admin approval.');
+      onCustomerSuccess?.(t('Reward claim submitted. It is waiting for admin approval.'));
     } catch (cause) {
       setError(cause.message);
     } finally {
@@ -5536,18 +7181,32 @@ function RewardsPage({ onCustomerSuccess }) {
     <section className='surface customer-rewards'>
       <div className='surface-heading'>
         <div>
+<<<<<<< HEAD
           <p className='eyebrow'>REWARDS</p>
           <h3>Friends' recharge rewards</h3>
+=======
+          <p className='eyebrow'>{t('REWARDS')}</p>
+          <h3>{t("Friends' recharge rewards")}</h3>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
         </div>
       </div>
       {error && <ErrorToast message={error} onDismiss={() => setError('')} />}
       <div className='metric-grid customer-reward-summary'>
+<<<<<<< HEAD
         <Metric label="Friends' approved recharges" value={money(rewards.qualifyingRechargeAmount ?? rewards.items?.[0]?.qualifyingRechargeAmount ?? 0)} />
         <Metric label='Available to claim' value={money(rewards.summary?.totalClaimable ?? 0)} />
         <Metric label='Waiting for approval' value={money(rewards.summary?.totalPending ?? 0)} />
         <Metric label='Paid / approved' value={money(rewards.summary?.totalCompleted ?? 0)} />
       </div>
       {loading ? <p className='empty-state' role='status'>Loading rewards…</p> : rewards.items?.length ? (
+=======
+        <Metric label={t("Friends' approved recharges")} value={money(rewards.qualifyingRechargeAmount ?? rewards.items?.[0]?.qualifyingRechargeAmount ?? 0)} />
+        <Metric label={t('Available to claim')} value={money(rewards.summary?.totalClaimable ?? 0)} />
+        <Metric label={t('Waiting for approval')} value={money(rewards.summary?.totalPending ?? 0)} />
+        <Metric label={t('Paid / approved')} value={money(rewards.summary?.totalCompleted ?? 0)} />
+      </div>
+      {loading ? <p className='empty-state' role='status'>{t('Loading rewards…')}</p> : rewards.items?.length ? (
+>>>>>>> d1aaf18 (Update OnlineTrade project)
         <div className='customer-reward-grid'>
           {rewards.items.map((item) => {
             const progress = item.ruleType === 'MILESTONE' && Number(item.thresholdAmount) > 0
@@ -5556,35 +7215,60 @@ function RewardsPage({ onCustomerSuccess }) {
             return (
               <article className='customer-reward-card' key={item.id}>
                 <div className='customer-reward-card-heading'>
+<<<<<<< HEAD
                   <div><p className='eyebrow'>{item.ruleType === 'MILESTONE' ? 'FRIENDS’ RECHARGE REWARD' : item.ruleType}</p><h4>{item.name}</h4></div>
+=======
+                  <div><p className='eyebrow'>{item.ruleType === 'MILESTONE' ? t('FRIENDS’ RECHARGE REWARD') : t(item.ruleType)}</p><h4>{item.name}</h4></div>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
                   <span className='customer-reward-amount'>{money(item.rewardAmount)}</span>
                 </div>
                 {item.ruleType === 'MILESTONE' ? (
                   <div className='customer-reward-progress'>
+<<<<<<< HEAD
                     <div className='customer-reward-progress-label'><span>Friends' approved recharges</span><strong>{money(item.qualifyingRechargeAmount)} <small>of {money(item.thresholdAmount)}</small></strong></div>
+=======
+                    <div className='customer-reward-progress-label'><span>{t("Friends' approved recharges")}</span><strong>{money(item.qualifyingRechargeAmount)} <small>{t('of')} {money(item.thresholdAmount)}</small></strong></div>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
                     <div className='customer-reward-progress-track' role='progressbar' aria-label={`${item.name} friends' recharge progress`} aria-valuemin='0' aria-valuemax='100' aria-valuenow={Math.round(progress)}><span style={{ width: `${progress}%` }} /></div>
                   </div>
                 ) : null}
                 <div className='customer-reward-footer'>
                   <StatusBadge status={item.status} />
                   {item.status === 'CLAIMABLE'
+<<<<<<< HEAD
                     ? <button type='button' className='primary-button' disabled={Boolean(busyId)} onClick={() => claim(item)}>{busyId === item.id ? 'Submitting…' : 'Claim reward'}<span>↗</span></button>
                     : <span className='customer-reward-status-copy'>{item.status === 'PENDING' ? 'Waiting for admin approval'
                       : item.status === 'APPROVED' ? 'Approved — awaiting payment'
                         : item.status === 'PAID' ? 'Paid to wallet'
                           : item.status === 'REJECTED' ? 'Claim rejected'
                             : item.ruleType === 'MILESTONE' ? 'Friends’ recharge target not reached' : 'Not available'}</span>}
+=======
+                    ? <button type='button' className='primary-button' disabled={Boolean(busyId)} onClick={() => claim(item)}>{busyId === item.id ? t('Submitting…') : t('Claim reward')}<span>↗</span></button>
+                    : <span className='customer-reward-status-copy'>{item.status === 'PENDING' ? t('Waiting for admin approval')
+                      : item.status === 'APPROVED' ? t('Approved — awaiting payment')
+                        : item.status === 'PAID' ? t('Paid to wallet')
+                          : item.status === 'REJECTED' ? t('Claim rejected')
+                            : item.ruleType === 'MILESTONE' ? t('Friends’ recharge target not reached') : t('Not available')}</span>}
+>>>>>>> d1aaf18 (Update OnlineTrade project)
                 </div>
               </article>
             );
           })}
         </div>
+<<<<<<< HEAD
       ) : <Empty>No friends' recharge rewards are available yet.</Empty>}
+=======
+      ) : <Empty>{t("No friends' recharge rewards are available yet.")}</Empty>}
+>>>>>>> d1aaf18 (Update OnlineTrade project)
     </section>
   );
 }
 
 function CustomerDownloadPage({ support }) {
+<<<<<<< HEAD
+=======
+  const { t } = useLanguage();
+>>>>>>> d1aaf18 (Update OnlineTrade project)
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [isInstalled, setIsInstalled] = useState(false);
 
@@ -5612,9 +7296,15 @@ function CustomerDownloadPage({ support }) {
 
   return (
     <section className='surface form-surface form-stack'>
+<<<<<<< HEAD
       <p className='eyebrow'>MKM MOBILE APP</p>
       <h2>Download & Install MKM</h2>
       <p>Get instant access to your account, daily tasks, wallet, and notifications directly on your mobile device.</p>
+=======
+      <p className='eyebrow'>{t('ONLINE TRADE MOBILE APP')}</p>
+      <h2>{t('Download & Install Online Trade')}</h2>
+      <p>{t('Get instant access to your account, daily tasks, wallet, and notifications directly on your mobile device.')}</p>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
 
       <div style={{ display: 'flex', flexDirection: 'column', gap: '14px', margin: '14px 0' }}>
         {downloadUrl && (
@@ -5625,7 +7315,11 @@ function CustomerDownloadPage({ support }) {
             rel='noreferrer'
             style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px 20px', fontSize: '15px' }}
           >
+<<<<<<< HEAD
             <ArrowDownToLine size={18} /> Download Official MKM APK
+=======
+            <ArrowDownToLine size={18} /> {t('Download Official Online Trade APK')}
+>>>>>>> d1aaf18 (Update OnlineTrade project)
           </a>
         )}
 
@@ -5636,6 +7330,7 @@ function CustomerDownloadPage({ support }) {
             onClick={handleInstallClick}
             style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', gap: '8px', padding: '14px 20px', fontSize: '15px' }}
           >
+<<<<<<< HEAD
             <ArrowDownToLine size={18} /> Install Web App on this Device
           </button>
         )}
@@ -5645,6 +7340,17 @@ function CustomerDownloadPage({ support }) {
           <ol style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '14px' }}>
             <li><strong>Android (Chrome):</strong> Tap the browser menu (⋮) → select <strong>"Install app"</strong> or <strong>"Add to Home screen"</strong>.</li>
             <li><strong>iPhone / iPad (Safari):</strong> Tap the Share icon (⎋) → select <strong>"Add to Home Screen"</strong>.</li>
+=======
+            <ArrowDownToLine size={18} /> {t('Install Web App on this Device')}
+          </button>
+        )}
+
+        <div style={{ padding: '16px', borderRadius: '8px', background: 'rgba(13, 79, 79, 0.05)', border: '1px solid rgba(13, 79, 79, 0.15)' }}>
+          <h4 style={{ marginBottom: '8px', color: '#0d4f4f' }}>📱 {t('Fast install without download:')}</h4>
+          <ol style={{ paddingLeft: '20px', display: 'flex', flexDirection: 'column', gap: '6px', fontSize: '14px' }}>
+            <li><strong>{t('Android (Chrome):')}</strong> {t('Tap the browser menu (⋮) → select')} <strong>"{t('Install app')}"</strong> {t('or')} <strong>"{t('Add to Home screen')}"</strong>.</li>
+            <li><strong>{t('iPhone / iPad (Safari):')}</strong> {t('Tap the Share icon (⎋) → select')} <strong>"{t('Add to Home Screen')}"</strong>.</li>
+>>>>>>> d1aaf18 (Update OnlineTrade project)
           </ol>
         </div>
       </div>
@@ -5653,24 +7359,32 @@ function CustomerDownloadPage({ support }) {
 }
 
 function SupportPage() {
+  const { t } = useLanguage();
   const [support, setSupport] = useState(null);
   useEffect(() => { api('/support').then(setSupport).catch(() => setSupport(null)); }, []);
   return (
     <section className='surface form-surface form-stack'>
-      <p className='eyebrow'>CUSTOMER SUPPORT</p>
-      <h2>Reach the MKM team</h2>
+      <p className='eyebrow'>{t('CUSTOMER SUPPORT')}</p>
+      <h2>{t('Reach the Online Trade team')}</h2>
       {support ? (
         <>
           <div className='product-details'>
-            <div><small>SUPPORT NAME</small><strong>{support.supportName}</strong></div>
-            <div><small>PHONE</small><strong>{support.supportPhone}</strong></div>
-            <div><small>OFFICIAL GROUP</small><strong>{support.officialGroupName}</strong></div>
+            <div><small>{t('SUPPORT NAME')}</small><strong>{support.supportName}</strong></div>
+            <div><small>{t('PHONE')}</small><strong>{support.supportPhone}</strong></div>
+            <div><small>{t('OFFICIAL GROUP')}</small><strong>{support.officialGroupName}</strong></div>
           </div>
           <p>{support.supportMessage}</p>
+<<<<<<< HEAD
           {support.whatsappEnabled !== false && support.whatsappUrl && <a className='primary-button' href={support.whatsappUrl} target='_blank' rel='noreferrer'><MessageCircle size={16} /> {support.whatsappMessage ? 'Chat on WhatsApp' : 'Contact us on WhatsApp'}</a>}
           {support.officialGroupEnabled !== false && support.officialGroupUrl && <a className='secondary-button' href={support.officialGroupUrl} target='_blank' rel='noreferrer'>{support.officialGroupLabel ?? 'Join Official Group'}</a>}
           {support.customerSupportEnabled !== false && support.customerSupportUrl && <a className='secondary-button' href={support.customerSupportUrl} target='_blank' rel='noreferrer'>{support.customerSupportLabel ?? 'Customer Support'}</a>}
           {support.appDownloadUrl && <a className='secondary-button' href={support.appDownloadUrl} target='_blank' rel='noreferrer'><ArrowDownToLine size={16} /> Download App</a>}
+=======
+          {support.whatsappEnabled !== false && support.whatsappUrl && <a className='primary-button' href={support.whatsappUrl} target='_blank' rel='noreferrer'><MessageCircle size={16} /> {support.whatsappMessage ? t('Chat on WhatsApp') : t('Contact us on WhatsApp')}</a>}
+          {support.officialGroupEnabled !== false && support.officialGroupUrl && <a className='secondary-button' href={support.officialGroupUrl} target='_blank' rel='noreferrer'>{t(support.officialGroupLabel ?? 'Join Official Group')}</a>}
+          {support.customerSupportEnabled !== false && support.customerSupportUrl && <a className='secondary-button' href={support.customerSupportUrl} target='_blank' rel='noreferrer'>{t(support.customerSupportLabel ?? 'Customer Support')}</a>}
+          {support.appDownloadUrl && <a className='secondary-button' href={support.appDownloadUrl} target='_blank' rel='noreferrer'><ArrowDownToLine size={16} /> {t('Download App')}</a>}
+>>>>>>> d1aaf18 (Update OnlineTrade project)
           {support.publicLinks?.length ? (
             <div className='product-details'>
               {support.publicLinks.filter((link) => link.enabled !== false).map((link) => (
@@ -5683,7 +7397,315 @@ function SupportPage() {
             </div>
           ) : null}
         </>
-      ) : <Empty>Support information is currently unavailable.</Empty>}
+      ) : <Empty>{t('Support information is currently unavailable.')}</Empty>}
+    </section>
+  );
+}
+
+function SupportChatPage({ support = {} }) {
+  const { t } = useLanguage();
+  const supportLinks = [
+    {
+      label: t(support.customerSupportLabel || 'Customer Support'),
+      href: support.customerSupportUrl,
+      enabled: support.customerSupportEnabled,
+      Icon: ShieldCheck,
+    },
+    {
+      label: t(support.officialGroupLabel || 'Official Group'),
+      href: support.officialGroupUrl,
+      enabled: support.officialGroupEnabled,
+      Icon: Users,
+    },
+  ].filter(({ enabled, href }) => enabled !== false && href);
+
+  return (
+    <section className='surface support-chat-page'>
+      <header className='support-chat-welcome'>
+        <span className='support-chat-avatar'><UserCircle size={27} strokeWidth={1.7} /></span>
+        <div className='support-chat-welcome-copy'>
+          <p className='eyebrow'>{t('ONLINE TRADE CUSTOMER CARE')}</p>
+          <h2>{t('Welcome to support')}</h2>
+          <p>{t('How can we help you today? Send us a message and our team will reply here.')}</p>
+        </div>
+      </header>
+      {supportLinks.length > 0 && (
+        <nav className='support-chat-links' aria-label={t('Other support options')}>
+          {supportLinks.map(({ label, href, Icon }) => {
+            const external = /^https?:\/\//i.test(href);
+            const content = <><Icon size={17} /><span>{label}</span></>;
+            return external ? (
+              <a className='support-chat-link' href={href} target='_blank' rel='noreferrer' key={label}>{content}</a>
+            ) : (
+              <Link className='support-chat-link' to={href} key={label}>{content}</Link>
+            );
+          })}
+        </nav>
+      )}
+      <SupportChatConversation
+        messagesUrl='/support/chat/messages'
+        sendUrl='/support/chat/messages'
+        viewerRole='CUSTOMER'
+        attachmentUrlFor={(messageId) => `/api/support/chat/messages/${messageId}/attachment`}
+      />
+    </section>
+  );
+}
+
+function SupportChatConversation({ messagesUrl, sendUrl, viewerRole, attachmentUrlFor, customerName }) {
+  const { t } = useLanguage();
+  const [messages, setMessages] = useState([]);
+  const [text, setText] = useState('');
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [sending, setSending] = useState(false);
+  const [error, setError] = useState('');
+  const messageListRef = useRef(null);
+  const shouldScrollRef = useRef(true);
+
+  useEffect(() => {
+    let active = true;
+    const refresh = async () => {
+      try {
+        const latest = await api(messagesUrl);
+        if (active) {
+          const list = messageListRef.current;
+          shouldScrollRef.current = !list || list.scrollHeight - list.scrollTop - list.clientHeight < 80;
+          setMessages(latest);
+          setError('');
+        }
+      } catch (cause) {
+        if (active) setError(cause.message);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    refresh();
+    const interval = window.setInterval(refresh, 8000);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
+  }, [messagesUrl]);
+
+  useEffect(() => {
+    const list = messageListRef.current;
+    if (list && shouldScrollRef.current) list.scrollTop = list.scrollHeight;
+  }, [messages]);
+
+  async function submitMessage(event) {
+    event.preventDefault();
+    if (!text.trim() && !file) return;
+    const formElement = event.currentTarget;
+    const payload = new FormData();
+    if (text.trim()) payload.append('text', text.trim());
+    if (file) payload.append('file', file);
+    setSending(true);
+    setError('');
+    try {
+      await api(sendUrl, { method: 'POST', body: payload });
+      setText('');
+      setFile(null);
+      formElement.reset();
+      shouldScrollRef.current = true;
+      setMessages(await api(messagesUrl));
+    } catch (cause) {
+      setError(cause.message);
+    } finally {
+      setSending(false);
+    }
+  }
+
+  return (
+    <div className='support-chat-conversation'>
+      <div className='support-chat-messages' role='log' aria-live='polite' aria-label={t('Chat messages')} ref={messageListRef}>
+        {loading ? <Empty>{t('Loading messages…')}</Empty> : messages.length === 0 ? (
+          <Empty>{t('No messages yet. Send a message and our team will get back to you.')}</Empty>
+        ) : messages.map((message) => {
+          const isMine = message.senderRole === viewerRole;
+          return (
+            <article className={`support-chat-message ${isMine ? 'is-mine' : ''}`} key={message.id}>
+              <div className='support-chat-message-meta'>
+                <strong>{isMine ? t('You') : (customerName || t('Online Trade Support'))}</strong>
+                <time dateTime={message.createdAt}>{new Date(message.createdAt).toLocaleString()}</time>
+              </div>
+              {message.text && <p>{message.text}</p>}
+              {message.hasAttachment && (
+                ['image/jpeg', 'image/png', 'image/webp', 'image/gif'].includes(message.attachmentMime) ? (
+                  <SupportChatImage
+                    src={assetUrl(attachmentUrlFor(message.id))}
+                    downloadUrl={assetUrl(`${attachmentUrlFor(message.id)}?download=1`)}
+                    name={message.attachmentName || t('Attached image')}
+                  />
+                ) : (
+                  <a className='support-chat-attachment' href={assetUrl(attachmentUrlFor(message.id))}>
+                    <FileText size={16} />
+                    <span>{message.attachmentName || t('Download attachment')}</span>
+                    <ArrowDownToLine size={15} />
+                  </a>
+                )
+              )}
+            </article>
+          );
+        })}
+      </div>
+      {error && <p className='support-chat-error' role='alert'>{error}</p>}
+      <form className='support-chat-composer' onSubmit={submitMessage}>
+        <label className='support-chat-input-label' htmlFor='support-chat-text'>{t('Message')}</label>
+        <textarea
+          id='support-chat-text'
+          value={text}
+          onChange={(event) => setText(event.target.value)}
+          maxLength={2000}
+          rows={3}
+          placeholder={t('Write your message…')}
+        />
+        <div className='support-chat-composer-actions'>
+          <label className='support-chat-file-button'>
+            <Paperclip size={17} />
+            <span>{file ? file.name : t('Attach file')}</span>
+            <input
+              type='file'
+              accept='.jpg,.jpeg,.png,.webp,.gif,.pdf,.zip,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.txt,.csv,.md'
+              onChange={(event) => setFile(event.target.files?.[0] ?? null)}
+            />
+          </label>
+          <small>{t('Up to 5 MB')}</small>
+          <button className='primary-button' type='submit' disabled={sending || (!text.trim() && !file)}>
+            <Send size={16} /> {sending ? t('Sending…') : t('Send')}
+          </button>
+        </div>
+      </form>
+    </div>
+  );
+}
+
+function SupportChatImage({ src, downloadUrl, name }) {
+  const { t } = useLanguage();
+  const [zoom, setZoom] = useState(1);
+  return (
+    <div className='support-chat-image'>
+      <div className='support-chat-image-controls'>
+        <span>{name}</span>
+        <button
+          type='button'
+          onClick={() => setZoom((current) => Math.max(0.5, Number((current - 0.25).toFixed(2))))}
+          disabled={zoom <= 0.5}
+          aria-label={`${t('Zoom out')} ${name}`}
+        >
+          <ZoomOut size={16} />
+        </button>
+        <button
+          type='button'
+          onClick={() => setZoom((current) => Math.min(3, Number((current + 0.25).toFixed(2))))}
+          disabled={zoom >= 3}
+          aria-label={`${t('Zoom in')} ${name}`}
+        >
+          <ZoomIn size={16} />
+        </button>
+        <a href={downloadUrl} aria-label={`${t('Download')} ${name}`}><ArrowDownToLine size={16} /></a>
+      </div>
+      <div className='support-chat-image-viewport'>
+        <img src={src} alt={name} crossOrigin='use-credentials' style={{ width: `${zoom * 100}%` }} />
+      </div>
+    </div>
+  );
+}
+
+function AdminSupportInboxPage() {
+  const location = useLocation();
+  const [conversations, setConversations] = useState([]);
+  const [selectedId, setSelectedId] = useState(() => new URLSearchParams(location.search).get('customerId') ?? '');
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  useEffect(() => {
+    setSelectedId(new URLSearchParams(location.search).get('customerId') ?? '');
+  }, [location.search]);
+
+  useEffect(() => {
+    let active = true;
+    const refresh = async () => {
+      try {
+        const latest = await api('/admin/support/chats');
+        if (active) {
+          setConversations(latest);
+          setError('');
+        }
+      } catch (cause) {
+        if (active) setError(cause.message);
+      } finally {
+        if (active) setLoading(false);
+      }
+    };
+    refresh();
+    const interval = window.setInterval(refresh, 15000);
+    return () => {
+      active = false;
+      window.clearInterval(interval);
+    };
+  }, []);
+
+  const selected = conversations.find(({ customerId }) => customerId === selectedId)
+    ?? (selectedId ? {
+      customerId: selectedId,
+      customerName: new URLSearchParams(location.search).get('customerName') || 'Customer',
+      phoneNumber: '',
+      unreadCount: 0,
+    } : null);
+  return (
+    <section className='surface support-chat-inbox'>
+      <div className='surface-heading'>
+        <div>
+          <p className='eyebrow'>CUSTOMER MESSAGES</p>
+          <h3>Online chat inbox</h3>
+        </div>
+      </div>
+      {error && <p className='support-chat-error' role='alert'>{error}</p>}
+      <div className='support-chat-inbox-layout'>
+        <div className='support-chat-inbox-list' aria-label='Customer conversations'>
+          {loading && conversations.length === 0 ? <Empty>Loading conversations…</Empty> : conversations.length === 0 ? (
+            <Empty>No customer chats yet.</Empty>
+          ) : conversations.map((conversation) => (
+            <button
+              type='button'
+              key={conversation.customerId}
+              className={`support-chat-inbox-item ${selectedId === conversation.customerId ? 'is-selected' : ''}`}
+              onClick={() => {
+                setSelectedId(conversation.customerId);
+                setConversations((current) => current.map((item) => item.customerId === conversation.customerId
+                  ? { ...item, unreadCount: 0 }
+                  : item));
+              }}
+            >
+              <span className='support-chat-inbox-item-heading'>
+                <strong>{conversation.customerName}</strong>
+                {conversation.unreadCount > 0 && <span className='support-chat-unread'>{conversation.unreadCount}</span>}
+              </span>
+              <small>{conversation.phoneNumber}</small>
+              <span className='support-chat-preview'>{conversation.lastText || conversation.lastAttachmentName || 'Attachment'}</span>
+            </button>
+          ))}
+        </div>
+        <div className='support-chat-inbox-thread'>
+          {selected ? (
+            <>
+              <div className='support-chat-customer-heading'>
+                <strong>{selected.customerName}</strong>
+                <span>{selected.phoneNumber}</span>
+              </div>
+              <SupportChatConversation
+                key={selected.customerId}
+                messagesUrl={`/admin/support/chats/${selected.customerId}/messages`}
+                sendUrl={`/admin/support/chats/${selected.customerId}/messages`}
+                viewerRole='ADMIN'
+                customerName={selected.customerName}
+                attachmentUrlFor={(messageId) => `/api/admin/support/chats/${selected.customerId}/messages/${messageId}/attachment`}
+              />
+            </>
+          ) : <Empty>Select a customer conversation to view and reply.</Empty>}
+        </div>
+      </div>
     </section>
   );
 }

@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <radialGradient id="dragonGlow" cx="40%" cy="40%" r="65%">
+      <stop offset="0%" stop-color="#f472b6"/>
+      <stop offset="45%" stop-color="#db2777"/>
+      <stop offset="85%" stop-color="#9d174d"/>
+      <stop offset="100%" stop-color="#700732"/>
+    </radialGradient>
+    <linearGradient id="dragonBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fdf2f8"/>
+      <stop offset="100%" stop-color="#fce7f3"/>
+    </linearGradient>
+    <linearGradient id="scaleTip" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a3e635"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </linearGradient>
+    <filter id="dragonShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#831843" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+
+  <rect width="400" height="400" rx="36" fill="url(#dragonBg)"/>
+  <circle cx="200" cy="210" r="145" fill="#ffffff" opacity="0.6"/>
+  <ellipse cx="200" cy="340" rx="100" ry="20" fill="#000000" opacity="0.12"/>
+
+  <g filter="url(#dragonShadow)">
+    <!-- Main Oval Body -->
+    <path d="M 200 130 
+             C 270 130 305 180 300 250 
+             C 295 315 240 340 200 345 
+             C 160 340 105 315 100 250 
+             C 95 180 130 130 200 130 Z" 
+          fill="url(#dragonGlow)"/>
+
+    <!-- Scales on Left -->
+    <path d="M 120 180 C 85 165 75 185 85 200 C 105 200 115 190 120 180 Z" fill="url(#scaleTip)"/>
+    <path d="M 105 230 C 70 220 65 245 75 255 C 95 255 102 240 105 230 Z" fill="url(#scaleTip)"/>
+    <path d="M 125 285 C 95 285 90 305 105 315 C 120 310 125 295 125 285 Z" fill="url(#scaleTip)"/>
+
+    <!-- Scales on Right -->
+    <path d="M 280 180 C 315 165 325 185 315 200 C 295 200 285 190 280 180 Z" fill="url(#scaleTip)"/>
+    <path d="M 295 230 C 330 220 335 245 325 255 C 305 255 298 240 295 230 Z" fill="url(#scaleTip)"/>
+    <path d="M 275 285 C 305 285 310 305 295 315 C 280 310 275 295 275 285 Z" fill="url(#scaleTip)"/>
+
+    <!-- Scales on Crown/Top -->
+    <path d="M 200 135 C 180 90 195 70 200 65 C 205 70 220 90 200 135 Z" fill="url(#scaleTip)"/>
+    <path d="M 175 140 C 145 105 130 115 130 125 C 150 140 165 142 175 140 Z" fill="url(#scaleTip)"/>
+    <path d="M 225 140 C 255 105 270 115 270 125 C 250 140 235 142 225 140 Z" fill="url(#scaleTip)"/>
+
+    <!-- Scales in Front Body -->
+    <path d="M 180 180 C 170 160 190 155 200 165 C 190 180 185 185 180 180 Z" fill="url(#scaleTip)"/>
+    <path d="M 220 220 C 240 205 250 225 240 235 C 225 235 220 225 220 220 Z" fill="url(#scaleTip)"/>
+    <path d="M 160 240 C 140 225 130 245 140 255 C 155 255 160 245 160 240 Z" fill="url(#scaleTip)"/>
+
+    <!-- Highlight Reflection -->
+    <path d="M 135 190 C 120 220 120 270 135 290 C 125 270 125 220 145 190 Z" fill="#ffffff" opacity="0.35"/>
+  </g>
+</svg>

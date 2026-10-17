@@ -1,0 +1,58 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bananaBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fffbeb"/>
+      <stop offset="100%" stop-color="#fef3c7"/>
+    </linearGradient>
+    <linearGradient id="bananaGrad1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a"/>
+      <stop offset="30%" stop-color="#facc15"/>
+      <stop offset="85%" stop-color="#eab308"/>
+      <stop offset="100%" stop-color="#ca8a04"/>
+    </linearGradient>
+    <linearGradient id="bananaGrad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fde047"/>
+      <stop offset="60%" stop-color="#eab308"/>
+      <stop offset="100%" stop-color="#a16207"/>
+    </linearGradient>
+    <linearGradient id="bananaTip" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#65a30d"/>
+      <stop offset="60%" stop-color="#4d7c0f"/>
+      <stop offset="100%" stop-color="#713f12"/>
+    </linearGradient>
+    <filter id="bananaShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#a16207" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <rect width="400" height="400" rx="36" fill="url(#bananaBg)"/>
+  <circle cx="200" cy="205" r="145" fill="#ffffff" opacity="0.6"/>
+  <ellipse cx="200" cy="335" rx="110" ry="22" fill="#000000" opacity="0.1"/>
+
+  <g filter="url(#bananaShadow)">
+    <!-- Back Banana -->
+    <path d="M 120 100 C 180 130 260 180 290 280 C 270 295 240 285 210 240 C 170 180 125 130 115 110 Z" fill="#d97706" opacity="0.6"/>
+
+    <!-- Middle Banana -->
+    <path d="M 115 105 
+             C 160 120 250 160 285 270 
+             C 275 290 245 285 215 245 
+             C 175 190 135 140 110 115 Z" 
+          fill="url(#bananaGrad2)"/>
+
+    <!-- Front Banana -->
+    <path d="M 110 110 
+             C 150 120 230 150 270 250 
+             C 280 275 255 285 230 265 
+             C 180 215 140 165 105 125 Z" 
+          fill="url(#bananaGrad1)"/>
+
+    <!-- Banana Ridge Lines -->
+    <path d="M 110 110 C 160 135 240 180 260 260" stroke="#fef08a" stroke-width="4" stroke-linecap="round" fill="none" opacity="0.8"/>
+    <path d="M 118 118 C 170 155 230 205 245 255" stroke="#ca8a04" stroke-width="2" stroke-linecap="round" fill="none" opacity="0.5"/>
+
+    <!-- Stems & Crowns -->
+    <path d="M 98 100 C 105 92 120 95 125 108 C 120 115 105 115 98 100 Z" fill="url(#bananaTip)"/>
+    <path d="M 268 250 C 275 255 280 265 278 272 C 272 270 268 262 268 250 Z" fill="#713f12"/>
+  </g>
+</svg>

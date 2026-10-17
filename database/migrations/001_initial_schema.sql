@@ -263,7 +263,7 @@ INSERT INTO settings(key, value) VALUES
   ('milestone_reward_amount', '800'::jsonb),
   ('secondary_milestone_threshold', '20000'::jsonb),
   ('weekly_reward_rate', '10'::jsonb),
-  ('referral_rates', '{"A":22,"B":2,"C":1}'::jsonb),
+  ('referral_rates', '{"A":10,"B":3,"C":2}'::jsonb),
   ('app_download_url', 'null'::jsonb);
 
 CREATE TABLE audit_logs (

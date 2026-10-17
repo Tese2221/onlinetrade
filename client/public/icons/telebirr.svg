@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <circle cx="50" cy="50" r="48" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <circle cx="50" cy="50" r="44" fill="#f0f9ff"/>
+  <!-- Telebirr Blue Swirl and Starburst -->
+  <g transform="translate(15, 15) scale(0.7)">
+    <circle cx="50" cy="50" r="46" fill="none" stroke="#0072bc" stroke-width="3.5"/>
+    <path d="M50 14 C48 30 35 45 15 50 C32 53 45 66 48 84 C52 66 65 53 82 50 C65 46 52 32 50 14 Z" fill="#0080ff"/>
+    <path d="M46 54 C46 64 38 72 28 72 C18 72 16 62 25 58 C32 55 38 60 36 65 C34 69 29 69 27 67" fill="none" stroke="#005b94" stroke-width="4" stroke-linecap="round"/>
+    <circle cx="50" cy="50" r="4" fill="#ffffff"/>
+  </g>
+</svg>

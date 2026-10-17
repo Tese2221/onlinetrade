@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <radialGradient id="appleGlow" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#ff6b6b"/>
+      <stop offset="45%" stop-color="#ee1133"/>
+      <stop offset="85%" stop-color="#aa0022"/>
+      <stop offset="100%" stop-color="#660011"/>
+    </radialGradient>
+    <linearGradient id="appleLeaf" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#84cc16"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </linearGradient>
+    <linearGradient id="appleStem" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#a16207"/>
+      <stop offset="100%" stop-color="#451a03"/>
+    </linearGradient>
+    <linearGradient id="appleBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef2f2"/>
+      <stop offset="100%" stop-color="#fee2e2"/>
+    </linearGradient>
+    <filter id="softShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#881337" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+
+  <!-- Background card rounded circle -->
+  <rect width="400" height="400" rx="36" fill="url(#appleBg)"/>
+  
+  <!-- Subtle circular badge backdrop -->
+  <circle cx="200" cy="210" r="145" fill="#ffffff" opacity="0.6"/>
+
+  <!-- Shadow below fruit -->
+  <ellipse cx="200" cy="335" rx="100" ry="22" fill="#000000" opacity="0.12"/>
+
+  <!-- Apple Body with drop shadow -->
+  <g filter="url(#softShadow)">
+    <!-- Stem -->
+    <path d="M 200 130 C 205 95 225 75 240 70 C 238 82 224 105 210 132 Z" fill="url(#appleStem)"/>
+    
+    <!-- Leaf -->
+    <path d="M 205 110 C 235 80 280 85 290 100 C 285 130 245 135 205 110 Z" fill="url(#appleLeaf)"/>
+    <path d="M 210 110 Q 250 105 285 102" stroke="#4ade80" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+
+    <!-- Left & Right Apple Lobes -->
+    <path d="M 200 145 
+             C 165 125 110 135 90 185 
+             C 65 245 80 305 135 325 
+             C 170 338 190 325 200 320 
+             C 210 325 230 338 265 325 
+             C 320 305 335 245 310 185 
+             C 290 135 235 125 200 145 Z" 
+          fill="url(#appleGlow)"/>
+
+    <!-- Glossy Highlight Curve -->
+    <path d="M 125 175 C 105 215 110 265 135 285 C 125 260 120 220 138 185 C 145 170 135 165 125 175 Z" 
+          fill="#ffffff" opacity="0.45"/>
+    <ellipse cx="140" cy="180" rx="18" ry="32" transform="rotate(-25 140 180)" fill="#ffffff" opacity="0.25"/>
+  </g>
+</svg>

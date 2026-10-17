@@ -25,8 +25,8 @@ referralsRouter.get('/', async (request, response, next) => {
         response.json({ success: true, data: {
             referralCode,
             referralLink: referralCode ? buildReferralLink(referralCode) : '',
-            shareText: referralCode ? `Join me on MKM using my referral code: ${referralCode}` : 'Join me on MKM',
-            rates: { A: 22, B: 2, C: 1 },
+            shareText: referralCode ? `Join me on Online Trade using my referral code: ${referralCode}` : 'Join me on Online Trade',
+            rates: { A: 10, B: 3, C: 2 },
         } });
     }
     catch (error) {
@@ -44,9 +44,9 @@ referralsRouter.get('/team/summary', async (request, response, next) => {
             pool.query(`SELECT coalesce(sum(credit), 0)::text AS total_earnings FROM wallet_ledger WHERE user_id = $1 AND transaction_type = 'REFERRAL_COMMISSION'`, [request.auth.userId]),
         ]);
         const byLevel = [
-            { userCount: 0, activeUserCount: 0, rechargeTotal: '0.00', rate: 22 },
+            { userCount: 0, activeUserCount: 0, rechargeTotal: '0.00', rate: 10 },
+            { userCount: 0, activeUserCount: 0, rechargeTotal: '0.00', rate: 3 },
             { userCount: 0, activeUserCount: 0, rechargeTotal: '0.00', rate: 2 },
-            { userCount: 0, activeUserCount: 0, rechargeTotal: '0.00', rate: 1 },
         ];
         for (const row of result.rows) {
             if (row.depth >= 1 && row.depth <= 3) {
@@ -54,7 +54,7 @@ referralsRouter.get('/team/summary', async (request, response, next) => {
                     userCount: row.user_count,
                     activeUserCount: row.active_count,
                     rechargeTotal: row.recharge_total,
-                    rate: [22, 2, 1][row.depth - 1],
+                    rate: [10, 3, 2][row.depth - 1],
                 };
             }
         }
@@ -68,7 +68,7 @@ referralsRouter.get('/team/summary', async (request, response, next) => {
                     rechargeTotal: centsToDecimal(cents),
                     totalEarnings: totalEarnings,
                 },
-                rates: { A: 22, B: 2, C: 1 },
+                rates: { A: 10, B: 3, C: 2 },
             } });
     }
     catch (error) {

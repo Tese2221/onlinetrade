@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <rect width="512" height="512" rx="112" fill="#0d4f4f"/>
+  <rect x="82" y="82" width="348" height="348" rx="88" fill="none" stroke="#8ebaba" stroke-width="12"/>
+  <text x="256" y="315" text-anchor="middle" fill="#f1c36c" font-family="Georgia, serif" font-size="180" font-weight="700" letter-spacing="4">OT</text>
+</svg>

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100" width="100" height="100">
+  <circle cx="50" cy="50" r="48" fill="#ffffff" stroke="#e2e8f0" stroke-width="2"/>
+  <circle cx="50" cy="50" r="44" fill="#f8fafc"/>
+  <!-- Awash Bank Blue and Orange Ribbon Emblem -->
+  <g transform="translate(18, 18) scale(0.64)">
+    <!-- Blue outer frame -->
+    <path d="M50 8 L88 28 L88 72 L50 92 L12 72 L12 28 Z" fill="#003366"/>
+    <!-- Orange inner geometric accent -->
+    <path d="M50 18 L78 34 L78 66 L50 82 L22 66 L22 34 Z" fill="#ffffff"/>
+    <path d="M50 25 L70 38 L70 62 L50 75 L30 62 L30 38 Z" fill="#f37021"/>
+    <!-- Central stylized A -->
+    <path d="M50 32 L62 58 L54 58 L50 48 L46 58 L38 58 Z" fill="#ffffff"/>
+    <path d="M47 51 L53 51 L50 43 Z" fill="#f37021"/>
+  </g>
+</svg>

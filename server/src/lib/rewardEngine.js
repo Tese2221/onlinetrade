@@ -38,7 +38,7 @@ export function buildDailyTaskForecast({ amount, dailyRate, activatedAt, expires
     const calculatedAmount = Number((Number(amount ?? 0) * Number(dailyRate ?? 0)).toFixed(2));
     rows.push({
       businessDate: cursor.toISOString().slice(0, 10),
-      baseAmount: calculatedAmount.toFixed(2),
+      baseAmount: Number(amount ?? 0).toFixed(2),
       configuredRate: Number(dailyRate ?? 0).toFixed(6),
       calculatedAmount: calculatedAmount.toFixed(2),
       status: 'WAITING',

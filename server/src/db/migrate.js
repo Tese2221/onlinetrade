@@ -33,7 +33,7 @@ try {
         }
     }
     if (!appliedCount)
-        console.log('MKM database schema is up to date.');
+        console.log('Online Trade database schema is up to date.');
 }
 finally {
     await pool.end();

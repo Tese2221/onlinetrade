@@ -61,7 +61,11 @@ productsRouter.post('/:productId/purchase', requireAuth, async (request, respons
             }
             const userResult = await client.query("SELECT id FROM users WHERE id = $1 AND status = 'ACTIVE' FOR UPDATE", [request.auth.userId]);
             if (!userResult.rowCount)
+<<<<<<< HEAD
                 throw Object.assign(new Error('This account cannot make purchases.'), { status: 403, code: 'ACCOUNT_INACTIVE' });
+=======
+                throw Object.assign(new Error('This account cannot make investments.'), { status: 403, code: 'ACCOUNT_INACTIVE' });
+>>>>>>> d1aaf18 (Update OnlineTrade project)
             const walletResult = await client.query('SELECT id FROM wallets WHERE user_id = $1 FOR UPDATE', [request.auth.userId]);
             const wallet = walletResult.rows[0];
             if (!wallet)
@@ -74,11 +78,11 @@ productsRouter.post('/:productId/purchase', requireAuth, async (request, respons
                 amount: product.price,
                 direction: 'DEBIT',
                 insufficientBalanceStatus: 400,
-                insufficientBalanceMessage: 'Your available balance is not enough for this purchase.',
+                insufficientBalanceMessage: 'Your available balance is not enough for this investment.',
                 transactionType: 'PRODUCT_PURCHASE',
                 referenceId: record.rows[0].id,
                 referenceType: 'product_purchase',
-                description: `Purchase: ${product.name}`,
+                description: `Investment: ${product.name}`,
             });
             const taskRows = buildDailyTaskForecast({
                 amount: Number(product.price),
@@ -91,6 +95,21 @@ productsRouter.post('/:productId/purchase', requireAuth, async (request, respons
                     VALUES ($1, $2, $3::date, $4, $5, $6, $7)
                     ON CONFLICT (product_purchase_id, business_date) DO NOTHING`,
                     [request.auth.userId, record.rows[0].id, row.businessDate, row.baseAmount, row.configuredRate, row.calculatedAmount, row.status]);
+            }
+            const previousPurchase = await client.query('SELECT 1 FROM product_purchases WHERE user_id = $1 AND id <> $2 LIMIT 1', [request.auth.userId, record.rows[0].id]);
+            if (!previousPurchase.rowCount) {
+                const referral = await client.query("SELECT referrer_id FROM referrals WHERE referred_user_id = $1 AND status = 'ACTIVE'", [request.auth.userId]);
+                if (referral.rowCount) {
+                    const eligibility =                     await client.query(`INSERT INTO luck_wheel_eligibility(user_id, spin_type, qualifying_user_id, source)
+                        VALUES ($1, 'REFERRAL', $2, 'REFERRAL')
+                        ON CONFLICT DO NOTHING
+                        RETURNING id`, [referral.rows[0].referrer_id, request.auth.userId]);
+                    if (eligibility.rowCount) {
+                        await client.query(`INSERT INTO notifications(user_id, title, message, type)
+                            VALUES ($1, 'Referral spin unlocked', 'Your invited customer made their first product investment. A referral wheel spin is ready for you.', 'LUCK_WHEEL_ELIGIBILITY')`,
+                        [referral.rows[0].referrer_id]);
+                    }
+                }
             }
             await client.query("INSERT INTO notifications(user_id, title, message, type) VALUES ($1, 'Product activated', $2, 'PRODUCT_ACTIVATION')", [request.auth.userId, `${product.name} is now active.`]);
             return { status: 201, body: { success: true, data: { purchaseId: record.rows[0].id, expiresAt: record.rows[0].expires_at } } };

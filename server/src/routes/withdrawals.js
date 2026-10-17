@@ -63,7 +63,7 @@ withdrawalsRouter.post('/', customerWithdrawalLimiter, async (request, response,
                 throw Object.assign(new Error('You can submit only one withdrawal per calendar day (Ethiopia time).'), { status: 429, code: 'WITHDRAWAL_COOLDOWN' });
             const productCheck = await client.query("SELECT 1 FROM product_purchases WHERE user_id = $1 AND status IN ('ACTIVE', 'COMPLETED') LIMIT 1", [request.auth.userId]);
             if (!productCheck.rowCount)
-                throw Object.assign(new Error('You must purchase at least one product before requesting a withdrawal.'), { status: 400, code: 'PRODUCT_PURCHASE_REQUIRED' });
+                throw Object.assign(new Error('You must invest in at least one product before requesting a withdrawal.'), { status: 400, code: 'PRODUCT_PURCHASE_REQUIRED' });
             const rechargeCheck = await client.query("SELECT coalesce(sum(amount), 0) AS total_recharge FROM recharge_requests WHERE user_id = $1 AND status = 'APPROVED'", [request.auth.userId]);
             if (Number(rechargeCheck.rows[0].total_recharge) < 300)
                 throw Object.assign(new Error('You must have an approved recharge of at least 300 ETB before requesting a withdrawal.'), { status: 400, code: 'RECHARGE_REQUIRED' });

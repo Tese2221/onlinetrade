@@ -1,6 +1,11 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
-import { normalizeSupportSettings } from '../src/lib/supportSettings.js';
+import { DEFAULT_PROMOTION_BANNERS, normalizeSupportSettings } from '../src/lib/supportSettings.js';
+
+test('default promotion banners show the current product and referral rates', () => {
+  assert.equal(DEFAULT_PROMOTION_BANNERS[0].subtitle, 'Earn 5% Daily Income');
+  assert.equal(DEFAULT_PROMOTION_BANNERS[4].subtitle, '3-Level Rewards (10%-3%-2%)');
+});
 
 test('support settings normalize the app download URL', () => {
   const normalized = normalizeSupportSettings({
@@ -69,9 +74,9 @@ test('support settings provide editable About page copy with safe defaults', () 
 test('support settings provide configurable welcome page content with safe defaults', () => {
   const defaults = normalizeSupportSettings({});
   assert.equal(defaults.welcomeEyebrow, 'YOUR MEMBER JOURNEY STARTS HERE');
-  assert.equal(defaults.welcomeTitle, 'Welcome to MKM');
+  assert.equal(defaults.welcomeTitle, 'Welcome to Online Trade');
   assert.equal(defaults.welcomeExamplePrice, 300);
-  assert.equal(defaults.welcomeExampleDailyEarnings, 72);
+  assert.equal(defaults.welcomeExampleDailyEarnings, 15);
   assert.equal(defaults.welcomeImageUrl, null);
 
   const configured = normalizeSupportSettings({

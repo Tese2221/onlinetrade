@@ -1,0 +1,77 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 900 380" width="100%" height="100%">
+  <defs>
+    <linearGradient id="b5Bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4c0519"/>
+      <stop offset="50%" stop-color="#881337"/>
+      <stop offset="100%" stop-color="#be123c"/>
+    </linearGradient>
+    <radialGradient id="roseGlow" cx="75%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fda4af" stop-opacity="0.35"/>
+      <stop offset="100%" stop-color="#fda4af" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="900" height="380" rx="24" fill="url(#b5Bg)"/>
+  <circle cx="700" cy="190" r="230" fill="url(#roseGlow)"/>
+
+  <!-- Left Content -->
+  <g transform="translate(60, 60)">
+    <rect width="180" height="34" rx="17" fill="#fb7185"/>
+    <text x="90" y="22" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="800" fill="#881337" text-anchor="middle" letter-spacing="0.5">TEAM COMMISSIONS</text>
+
+    <text x="0" y="90" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="38" font-weight="900" fill="#ffffff" letter-spacing="-0.5">
+      Invite Friends &amp; Earn
+    </text>
+    <text x="0" y="135" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="38" font-weight="900" fill="#fecdd3" letter-spacing="-0.5">
+      3-Level Rewards (10%-3%-2%)
+    </text>
+
+    <text x="0" y="180" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="15" font-weight="500" fill="#ffe4e6">
+      Earn commissions on eligible activity from your referral team.
+    </text>
+
+    <g transform="translate(0, 215)">
+      <rect width="180" height="46" rx="23" fill="#ffffff"/>
+      <text x="90" y="28" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="14" font-weight="800" fill="#be123c" text-anchor="middle">
+        Invite Friends →
+      </text>
+    </g>
+  </g>
+
+  <!-- Right Visual: 3-Tier Network Tree Badges -->
+  <g transform="translate(680, 190)">
+    <ellipse cx="0" cy="115" rx="140" ry="22" fill="#000000" opacity="0.3"/>
+
+    <!-- Leader Node -->
+    <g transform="translate(0, -60)">
+      <circle cx="0" cy="0" r="42" fill="#ffffff" stroke="#f43f5e" stroke-width="4"/>
+      <text x="0" y="8" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="24" font-weight="900" fill="#be123c" text-anchor="middle">YOU</text>
+    </g>
+
+    <!-- Connector lines -->
+    <line x1="0" y1="-18" x2="-80" y2="40" stroke="#fda4af" stroke-width="4"/>
+    <line x1="0" y1="-18" x2="0" y2="40" stroke="#fda4af" stroke-width="4"/>
+    <line x1="0" y1="-18" x2="80" y2="40" stroke="#fda4af" stroke-width="4"/>
+
+    <!-- Level A Node -->
+    <g transform="translate(-80, 50)">
+      <circle cx="0" cy="0" r="32" fill="#fb7185"/>
+      <text x="0" y="-3" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="800" fill="#ffffff" text-anchor="middle">LVL A</text>
+      <text x="0" y="14" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="900" fill="#ffffff" text-anchor="middle">10%</text>
+    </g>
+
+    <!-- Level B Node -->
+    <g transform="translate(0, 50)">
+      <circle cx="0" cy="0" r="32" fill="#f43f5e"/>
+      <text x="0" y="-3" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="800" fill="#ffffff" text-anchor="middle">LVL B</text>
+      <text x="0" y="14" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="900" fill="#ffffff" text-anchor="middle">3%</text>
+    </g>
+
+    <!-- Level C Node -->
+    <g transform="translate(80, 50)">
+      <circle cx="0" cy="0" r="32" fill="#e11d48"/>
+      <text x="0" y="-3" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="12" font-weight="800" fill="#ffffff" text-anchor="middle">LVL C</text>
+      <text x="0" y="14" font-family="-apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif" font-size="16" font-weight="900" fill="#ffffff" text-anchor="middle">2%</text>
+    </g>
+  </g>
+</svg>

@@ -1,4 +1,4 @@
-const DEFAULT_REFERRAL_RATES = { A: 22, B: 2, C: 1 };
+const DEFAULT_REFERRAL_RATES = { A: 10, B: 3, C: 2 };
 
 function toNumber(value, fallback) {
   const numeric = Number(value);
@@ -38,9 +38,9 @@ function normalizeReferralRates(value) {
       const parsed = JSON.parse(source);
       if (parsed && typeof parsed === 'object') {
         return {
-          A: toNumber(parsed.A ?? parsed.a ?? 22, 22),
-          B: toNumber(parsed.B ?? parsed.b ?? 2, 2),
-          C: toNumber(parsed.C ?? parsed.c ?? 1, 1),
+          A: toNumber(parsed.A ?? parsed.a ?? 10, 10),
+          B: toNumber(parsed.B ?? parsed.b ?? 3, 3),
+          C: toNumber(parsed.C ?? parsed.c ?? 2, 2),
         };
       }
     } catch {
@@ -50,9 +50,9 @@ function normalizeReferralRates(value) {
 
   if (source && typeof source === 'object') {
     return {
-      A: toNumber(source.A ?? source.a ?? 22, 22),
-      B: toNumber(source.B ?? source.b ?? 2, 2),
-      C: toNumber(source.C ?? source.c ?? 1, 1),
+      A: toNumber(source.A ?? source.a ?? 10, 10),
+      B: toNumber(source.B ?? source.b ?? 3, 3),
+      C: toNumber(source.C ?? source.c ?? 2, 2),
     };
   }
 

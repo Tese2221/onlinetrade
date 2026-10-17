@@ -1,12 +1,12 @@
-const SHELL_CACHE = 'mkm-shell-v1';
-const ASSET_CACHE = 'mkm-assets-v1';
+const SHELL_CACHE = 'ot-shell-v1';
+const ASSET_CACHE = 'ot-assets-v1';
 const APP_SHELL = '/';
 const CACHEABLE_PATHS = ['/manifest.webmanifest', '/icons/'];
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(SHELL_CACHE)
-      .then((cache) => cache.addAll([APP_SHELL, '/manifest.webmanifest', '/icons/mkm-icon.svg']))
+      .then((cache) => cache.addAll([APP_SHELL, '/manifest.webmanifest', '/icons/ot-icon.svg', '/icons/mkm-icon.svg']))
       .then(() => self.skipWaiting()),
   );
 });
@@ -16,7 +16,7 @@ self.addEventListener('activate', (event) => {
     caches.keys()
       .then((keys) => Promise.all(
         keys
-          .filter((key) => key.startsWith('mkm-') && ![SHELL_CACHE, ASSET_CACHE].includes(key))
+          .filter((key) => (key.startsWith('ot-') || key.startsWith('mkm-')) && ![SHELL_CACHE, ASSET_CACHE].includes(key))
           .map((key) => caches.delete(key)),
       ))
       .then(() => self.clients.claim()),

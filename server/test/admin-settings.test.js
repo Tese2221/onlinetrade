@@ -23,6 +23,10 @@ test('admin settings default minimum recharge is 300 ETB', () => {
   assert.equal(normalized.minimumRechargeAmount, 300);
 });
 
+test('admin settings default referral rates are 10, 3, and 2 percent', () => {
+  assert.deepEqual(normalizeAdminSettings({}).referralRates, { A: 10, B: 3, C: 2 });
+});
+
 test('admin settings default withdrawal fee is 10 percent and can be configured', () => {
   assert.equal(normalizeAdminSettings({}).withdrawalFee, 10);
   assert.equal(normalizeAdminSettings({ withdrawal_fee: '7.5' }).withdrawalFee, 7.5);
@@ -35,5 +39,5 @@ test('admin settings omit invalid values safely', () => {
   });
 
   assert.equal(normalized.appDownloadUrl, null);
-  assert.deepEqual(normalized.referralRates, { A: 22, B: 2, C: 1 });
+  assert.deepEqual(normalized.referralRates, { A: 10, B: 3, C: 2 });
 });

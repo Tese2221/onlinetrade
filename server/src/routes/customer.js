@@ -6,7 +6,7 @@ export const customerRouter = Router();
 customerRouter.get('/dashboard', requireAuth, async (request, response, next) => {
     try {
         const userId = request.auth.userId;
-        const [account, team, activity] = await Promise.all([
+        const [account, team, activity, deposits, withdrawals] = await Promise.all([
             pool.query('SELECT available_balance, pending_balance, locked_balance FROM wallets WHERE user_id = $1', [userId]),
             pool.query(`WITH RECURSIVE team(user_id, depth) AS (
            SELECT referred_user_id, 1 FROM referrals WHERE referrer_id = $1 AND status = 'ACTIVE'
@@ -22,6 +22,8 @@ customerRouter.get('/dashboard', requireAuth, async (request, response, next) =>
            CASE WHEN credit > 0 THEN 'CREDIT' ELSE 'DEBIT' END AS direction,
            status, created_at AS "createdAt"
          FROM wallet_ledger WHERE user_id = $1 ORDER BY created_at DESC LIMIT 5`, [userId]),
+            pool.query("SELECT coalesce(sum(amount), 0)::text AS total_deposit FROM recharge_requests WHERE user_id = $1 AND status = 'APPROVED'", [userId]),
+            pool.query("SELECT coalesce(sum(net_amount), 0)::text AS total_withdrawal FROM withdrawals WHERE user_id = $1 AND status = 'COMPLETED'", [userId]),
         ]);
         const totals = {
             aLevel: { userCount: 0, rechargeTotal: '0.00' },
@@ -41,6 +43,8 @@ customerRouter.get('/dashboard', requireAuth, async (request, response, next) =>
             data: {
                 wallet: { availableBalance: balance.available_balance, pendingBalance: balance.pending_balance, lockedBalance: balance.locked_balance },
                 referralCode: user.rows[0].referral_code,
+                totalDeposit: deposits.rows[0]?.total_deposit ?? '0.00',
+                totalWithdrawal: withdrawals.rows[0]?.total_withdrawal ?? '0.00',
                 team: {
                     ...totals,
                     total: { userCount: totals.aLevel.userCount + totals.bLevel.userCount + totals.cLevel.userCount, rechargeTotal: centsToDecimal(totalCents) },
@@ -79,7 +83,7 @@ customerRouter.get('/config/public', async (_request, response, next) => {
             'welcome_eyebrow', 'welcome_title', 'welcome_intro', 'welcome_bonus_label',
             'welcome_example_title', 'welcome_example_price', 'welcome_example_daily_earnings',
             'welcome_disclaimer', 'welcome_image_url', 'welcome_image_alt',
-            'welcome_home_button_label', 'public_links',
+            'welcome_home_button_label', 'public_links', 'promotion_banners',
         ];
         const result = await pool.query("SELECT key, value #>> '{}' AS value FROM settings WHERE key = ANY($1::text[])", [keys]);
         const settings = Object.fromEntries(result.rows.map(({ key, value }) => [key, value]));

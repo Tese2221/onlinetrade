@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="100%" height="100%">
+  <defs>
+    <radialGradient id="berryGlow" cx="40%" cy="35%" r="65%">
+      <stop offset="0%" stop-color="#fb7185"/>
+      <stop offset="40%" stop-color="#f43f5e"/>
+      <stop offset="80%" stop-color="#e11d48"/>
+      <stop offset="100%" stop-color="#881337"/>
+    </radialGradient>
+    <linearGradient id="berryBg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fff1f2"/>
+      <stop offset="100%" stop-color="#ffe4e6"/>
+    </linearGradient>
+    <linearGradient id="berryLeaf" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4ade80"/>
+      <stop offset="100%" stop-color="#15803d"/>
+    </linearGradient>
+    <filter id="berryShadow" x="-10%" y="-10%" width="120%" height="120%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#881337" flood-opacity="0.22"/>
+    </filter>
+  </defs>
+
+  <rect width="400" height="400" rx="36" fill="url(#berryBg)"/>
+  <circle cx="200" cy="210" r="145" fill="#ffffff" opacity="0.6"/>
+  <ellipse cx="200" cy="340" rx="95" ry="20" fill="#000000" opacity="0.12"/>
+
+  <g filter="url(#berryShadow)">
+    <!-- Strawberry Heart-Cone Shape -->
+    <path d="M 200 135 
+             C 275 130 320 180 305 240 
+             C 290 300 225 340 200 345 
+             C 175 340 110 300 95 240 
+             C 80 180 125 130 200 135 Z" 
+          fill="url(#berryGlow)"/>
+
+    <!-- Strawberry Seeds (Golden Pits) -->
+    <g fill="#fef08a" opacity="0.85">
+      <ellipse cx="140" cy="180" rx="3" ry="5" transform="rotate(-15 140 180)"/>
+      <ellipse cx="180" cy="170" rx="3" ry="5" transform="rotate(5 180 170)"/>
+      <ellipse cx="225" cy="175" rx="3" ry="5" transform="rotate(15 225 175)"/>
+      <ellipse cx="265" cy="190" rx="3" ry="5" transform="rotate(25 265 190)"/>
+
+      <ellipse cx="125" cy="220" rx="3" ry="5" transform="rotate(-20 125 220)"/>
+      <ellipse cx="165" cy="215" rx="3" ry="5" transform="rotate(-5 165 215)"/>
+      <ellipse cx="210" cy="215" rx="3" ry="5" transform="rotate(10 210 215)"/>
+      <ellipse cx="255" cy="230" rx="3" ry="5" transform="rotate(20 255 230)"/>
+
+      <ellipse cx="145" cy="260" rx="3" ry="5" transform="rotate(-15 145 260)"/>
+      <ellipse cx="190" cy="260" rx="3" ry="5" transform="rotate(0 190 260)"/>
+      <ellipse cx="235" cy="265" rx="3" ry="5" transform="rotate(15 235 265)"/>
+
+      <ellipse cx="170" cy="295" rx="3" ry="5" transform="rotate(-5 170 295)"/>
+      <ellipse cx="215" cy="300" rx="3" ry="5" transform="rotate(10 215 300)"/>
+      <ellipse cx="198" cy="325" rx="2.5" ry="4" transform="rotate(0 198 325)"/>
+    </g>
+
+    <!-- Glossy Highlight Curve -->
+    <path d="M 125 170 C 105 210 110 250 125 270 C 115 245 115 210 135 175 Z" fill="#ffffff" opacity="0.45"/>
+
+    <!-- Star Calyx Crown (Green Leaves on Top) -->
+    <path d="M 200 135 L 200 100" stroke="#166534" stroke-width="6" stroke-linecap="round"/>
+    <path d="M 200 135 C 190 120 160 110 135 125 C 155 135 180 138 200 135 Z" fill="url(#berryLeaf)"/>
+    <path d="M 200 135 C 190 125 185 95 200 80 C 205 95 205 125 200 135 Z" fill="url(#berryLeaf)"/>
+    <path d="M 200 135 C 210 120 240 110 265 125 C 245 135 220 138 200 135 Z" fill="url(#berryLeaf)"/>
+    <path d="M 200 135 C 185 138 165 155 155 170 C 175 160 190 145 200 135 Z" fill="url(#berryLeaf)"/>
+    <path d="M 200 135 C 215 138 235 155 245 170 C 225 160 210 145 200 135 Z" fill="url(#berryLeaf)"/>
+  </g>
+</svg>
